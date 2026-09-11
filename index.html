@@ -137,12 +137,11 @@ button, input{ font-family: inherit; }
 }
 .segmented .thumb{
   position:absolute;
-  top:3px; bottom:3px; left:3px;
-  width: calc(50% - 3px);
+  top:3px; bottom:3px; left:0;
   background: var(--panel);
   border-radius: 9px;
   box-shadow: var(--shadow-1);
-  transition: transform 0.42s var(--ease-spring);
+  transition: transform 0.42s var(--ease-spring), width 0.42s var(--ease-spring);
   z-index: 0;
 }
 .segmented button{
@@ -242,6 +241,10 @@ button, input{ font-family: inherit; }
   font-weight: 700; letter-spacing: -0.015em;
   margin:0; line-height:1.15;
 }
+.prompt-sub{
+  font-size: 14px; color: var(--label-secondary); font-weight: 500;
+  margin: 4px 0 0;
+}
 .icon-btn{
   display:flex; align-items:center; gap: 6px;
   font-size: 13px; font-weight: 600;
@@ -287,24 +290,50 @@ button, input{ font-family: inherit; }
 }
 .name-input-row button:active{ transform: scale(0.95); opacity:.88; }
 
-.map-card{ padding: 6px; position:relative; overflow: visible; }
-.map-card svg{ width:100%; height:auto; display:block; border-radius: 16px; overflow:hidden; }
+.map-card{
+  padding: 6px;
+  position:relative;
+  overflow: visible;
+  isolation: isolate;
+}
+.map-card::before{
+  content:"";
+  position:absolute;
+  inset: -18%;
+  background: radial-gradient(closest-side, rgba(10,132,255,0.20), transparent 72%);
+  filter: blur(28px);
+  z-index:-1;
+  pointer-events:none;
+}
+.map-viewport{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  touch-action:none;
+}
+.map-viewport.zoomed{ cursor: grab; }
+.map-viewport.panning{ cursor: grabbing; }
+.map-card svg{ width:100%; height:auto; display:block; }
 .map-card path{
   fill: var(--map-fill);
   stroke: var(--map-stroke);
   stroke-width: 1;
   cursor:pointer;
-  transition: fill 0.35s var(--ease-standard), transform 0.2s var(--ease-spring);
+  transition: fill 0.35s var(--ease-standard), transform 0.2s var(--ease-spring), filter 0.2s ease;
   transform-box: fill-box;
   transform-origin: center;
 }
 .map-card.mode-name path{ cursor:default; }
+@media (hover:hover){
+  .map-card path:hover{ filter: brightness(1.22); }
+}
 .map-card path:active{ transform: scale(0.985); }
 .map-card path.done-correct{ fill: var(--map-fill-done); cursor:default; }
-.map-card path.flash-correct{ fill: var(--green); }
-.map-card path.flash-wrong{ fill: var(--red); }
-.map-card path.target-highlight{ fill: var(--tint); }
-.map-card path.reveal-correct{ fill: var(--tint); }
+.map-card path.flash-correct{ fill: var(--green); filter: drop-shadow(0 3px 10px rgba(48,209,88,0.55)); }
+.map-card path.flash-wrong{ fill: var(--red); filter: drop-shadow(0 3px 10px rgba(255,69,58,0.55)); }
+.map-card path.target-highlight{ fill: var(--tint); filter: drop-shadow(0 3px 12px rgba(10,132,255,0.6)); }
+.map-card path.reveal-correct{ fill: var(--tint); filter: drop-shadow(0 3px 12px rgba(10,132,255,0.6)); }
+.map-card path.visited-current{ fill: var(--tint); opacity: 1; filter: drop-shadow(0 3px 12px rgba(10,132,255,0.6)); }
 
 .map-card .draw-in path{
   stroke-dasharray: 2200;
@@ -322,6 +351,57 @@ button, input{ font-family: inherit; }
   from{ r:2; opacity: 0.9; stroke-width: 6; }
   to{ r: 34; opacity: 0; stroke-width: 0.5; }
 }
+
+.map-tooltip{
+  position:absolute;
+  left:0; top:0;
+  transform: translate(-50%, -100%);
+  background: var(--island-bg);
+  color: var(--island-fg);
+  font-size:12px; font-weight:600;
+  padding:6px 11px;
+  border-radius:8px;
+  white-space:nowrap;
+  opacity:0;
+  transition: opacity .15s ease;
+  pointer-events:none;
+  z-index:8;
+}
+.map-tooltip.show{ opacity:1; }
+
+.zoom-controls{
+  position:absolute;
+  top:12px; right:12px;
+  z-index:9;
+  display:flex; flex-direction:column;
+  align-items:center;
+  gap:1px;
+}
+.zoom-controls button{
+  width:34px; height:34px;
+  border:none;
+  background: var(--blur-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--label);
+  font-size:19px; font-weight:500;
+  line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  box-shadow: var(--shadow-1);
+  transition: transform .15s var(--ease-standard);
+}
+.zoom-controls button:active{ transform: scale(0.88); }
+.zoom-controls #zoomInBtn{ border-radius: 12px 12px 3px 3px; }
+.zoom-controls #zoomOutBtn{ border-radius: 3px 3px 12px 12px; margin-bottom:8px; }
+.zoom-controls #zoomResetBtn{
+  border-radius: 50%;
+  opacity:0; pointer-events:none;
+  transform: scale(0.7);
+  transition: opacity .2s ease, transform .3s var(--ease-spring);
+}
+.zoom-controls #zoomResetBtn.visible{ opacity:1; pointer-events:auto; transform: scale(1); }
+.zoom-controls #zoomResetBtn svg{ width:16px; height:16px; }
 
 /* ---------- Dynamic-Island style toast ---------- */
 .island{
@@ -435,6 +515,7 @@ button, input{ font-family: inherit; }
         <div class="thumb" id="modeThumb"></div>
         <button class="active" data-mode="locate">Locate it</button>
         <button data-mode="name">Name it</button>
+        <button data-mode="learn">Learn</button>
       </div>
       <div class="mode-detail" id="modeDetail">We name a state — tap it on the map.</div>
 
@@ -462,6 +543,7 @@ button, input{ font-family: inherit; }
         <div>
           <span class="prompt-eyebrow" id="promptLabel">Locate</span>
           <h2 id="promptText">—</h2>
+          <p class="prompt-sub" id="promptSub"></p>
         </div>
         <button class="icon-btn" id="hintBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -475,23 +557,25 @@ button, input{ font-family: inherit; }
       </div>
 
       <div class="card map-card" id="mapPanel">
-        <div id="mapMount"></div>
+        <div class="map-viewport" id="mapViewport">
+          <div id="mapMount"></div>
+          <div class="map-tooltip" id="mapTooltip"></div>
+        </div>
+        <div class="zoom-controls">
+          <button id="zoomInBtn" aria-label="Zoom in">+</button>
+          <button id="zoomOutBtn" aria-label="Zoom out">−</button>
+          <button id="zoomResetBtn" aria-label="Reset view">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="card hud-card">
-        <div class="hud-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          <b id="hudScore">0</b><span>correct</span>
-        </div>
-        <div class="hud-item streak">
+        <div class="hud-item streak" id="hudStreakItem">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-3 4-3 8a3 3 0 0 0 6 0c1.5 1 2 3 2 4.5A5.5 5.5 0 0 1 6 14c0-4 3-6 3-9 1 .5 2 1.5 2 3 0-2 .5-4.5 1-6Z"/></svg>
           <b id="hudStreak">0</b><span>streak</span>
         </div>
-        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="hud-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          <b id="hudTimer">0:00</b>
-        </div>
+        <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
         <button class="btn-text" id="quitBtn" style="padding:6px 0; font-size:13px;">End</button>
       </div>
     </div>
@@ -516,7 +600,7 @@ button, input{ font-family: inherit; }
       </div>
 
       <div class="card missed-card">
-        <h3>Missed states</h3>
+        <h3 id="missedTitle">Missed states</h3>
         <span class="sub" id="missedSub">States to revisit</span>
         <div id="missedList"></div>
       </div>
@@ -568,23 +652,196 @@ button, input{ font-family: inherit; }
 
   buildSVG(document.getElementById('heroMapPreview'), STATES, {decorative:true});
 
+  // ---------------- Map zoom / pan / tooltip ----------------
+  const FULL_VIEW = {x:0, y:0, w:975, h:610};
+  const MIN_W = FULL_VIEW.w / 5.5; // max ~5.5x zoom
+  const view = {...FULL_VIEW};
+  const viewport = document.getElementById('mapViewport');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+  const tooltip = document.getElementById('mapTooltip');
+  const hoverCapable = window.matchMedia('(hover: hover)').matches;
+  let suppressNextClick = false;
+
+  function currentSvg(){ return document.querySelector('#mapMount svg'); }
+
+  function applyView(){
+    const svg = currentSvg();
+    if(!svg) return;
+    svg.setAttribute('viewBox', view.x + ' ' + view.y + ' ' + view.w + ' ' + view.h);
+    const zoomed = view.w < FULL_VIEW.w - 0.5;
+    zoomResetBtn.classList.toggle('visible', zoomed);
+    viewport.classList.toggle('zoomed', zoomed);
+  }
+
+  function zoomAt(factor, clientX, clientY){
+    const svg = currentSvg();
+    if(!svg) return;
+    const rect = svg.getBoundingClientRect();
+    if(rect.width === 0) return;
+    const px = (clientX - rect.left) / rect.width;
+    const py = (clientY - rect.top) / rect.height;
+    const vx = view.x + px * view.w;
+    const vy = view.y + py * view.h;
+    let newW = Math.max(MIN_W, Math.min(FULL_VIEW.w, view.w / factor));
+    let newH = newW * (FULL_VIEW.h / FULL_VIEW.w);
+    let newX = Math.max(0, Math.min(FULL_VIEW.w - newW, vx - px * newW));
+    let newY = Math.max(0, Math.min(FULL_VIEW.h - newH, vy - py * newH));
+    view.x = newX; view.y = newY; view.w = newW; view.h = newH;
+    applyView();
+  }
+
+  function panBy(dxPx, dyPx){
+    const svg = currentSvg();
+    if(!svg) return;
+    const rect = svg.getBoundingClientRect();
+    if(rect.width === 0) return;
+    const dx = dxPx / rect.width * view.w;
+    const dy = dyPx / rect.height * view.h;
+    view.x = Math.max(0, Math.min(FULL_VIEW.w - view.w, view.x - dx));
+    view.y = Math.max(0, Math.min(FULL_VIEW.h - view.h, view.y - dy));
+    applyView();
+  }
+
+  function resetView(animated){
+    if(!animated){ Object.assign(view, FULL_VIEW); applyView(); return; }
+    const start = {...view};
+    const startTime = performance.now();
+    const dur = 380;
+    function tick(now){
+      const t = Math.min(1, (now - startTime) / dur);
+      const e = 1 - Math.pow(1 - t, 3);
+      view.x = start.x + (FULL_VIEW.x - start.x) * e;
+      view.y = start.y + (FULL_VIEW.y - start.y) * e;
+      view.w = start.w + (FULL_VIEW.w - start.w) * e;
+      view.h = start.h + (FULL_VIEW.h - start.h) * e;
+      applyView();
+      if(t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  viewport.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoomAt(e.deltaY < 0 ? 1.2 : 1/1.2, e.clientX, e.clientY);
+  }, {passive:false});
+
+  const pointers = new Map();
+  let pinchStartDist = 0;
+  let dragLast = null;
+  let dragMoved = false;
+
+  viewport.addEventListener('pointerdown', e => {
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    viewport.setPointerCapture(e.pointerId);
+    dragMoved = false;
+    if(pointers.size === 1){
+      dragLast = {x:e.clientX, y:e.clientY};
+      viewport.classList.add('panning');
+    } else if(pointers.size === 2){
+      const pts = [...pointers.values()];
+      pinchStartDist = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+    }
+  });
+
+  viewport.addEventListener('pointermove', e => {
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+    if(pointers.size === 1 && view.w < FULL_VIEW.w - 0.5){
+      const dx = e.clientX - dragLast.x;
+      const dy = e.clientY - dragLast.y;
+      if(Math.abs(dx) + Math.abs(dy) > 3) dragMoved = true;
+      panBy(dx, dy);
+      dragLast = {x:e.clientX, y:e.clientY};
+    } else if(pointers.size === 2){
+      const pts = [...pointers.values()];
+      const dist = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      const mid = {x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2};
+      if(pinchStartDist > 0) zoomAt(dist / pinchStartDist, mid.x, mid.y);
+      pinchStartDist = dist;
+      dragMoved = true;
+    }
+
+    if(hoverCapable && pointers.size === 0) updateTooltip(e);
+  });
+
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    viewport.classList.remove('panning');
+    if(pointers.size < 2) pinchStartDist = 0;
+    if(pointers.size === 0 && dragMoved){
+      suppressNextClick = true;
+      setTimeout(() => suppressNextClick = false, 60);
+    }
+  }
+  viewport.addEventListener('pointerup', endPointer);
+  viewport.addEventListener('pointercancel', endPointer);
+
+  function updateTooltip(e){
+    const canShow = !!game && game.mode === 'learn' && pointers.size === 0;
+    const target = e.target.closest && e.target.closest('path[data-id]');
+    if(canShow && target){
+      const st = STATES.find(s => s.id === target.dataset.id);
+      const vpRect = viewport.getBoundingClientRect();
+      tooltip.textContent = st ? st.name : '';
+      tooltip.style.left = (e.clientX - vpRect.left) + 'px';
+      tooltip.style.top = (e.clientY - vpRect.top - 14) + 'px';
+      tooltip.classList.add('show');
+    } else {
+      tooltip.classList.remove('show');
+    }
+  }
+  if(hoverCapable){
+    viewport.addEventListener('pointermove', updateTooltip);
+    viewport.addEventListener('pointerleave', () => tooltip.classList.remove('show'));
+  }
+
+  zoomInBtn.addEventListener('click', () => {
+    const svg = currentSvg(); if(!svg) return;
+    const r = svg.getBoundingClientRect();
+    zoomAt(1.5, r.left + r.width/2, r.top + r.height/2);
+  });
+  zoomOutBtn.addEventListener('click', () => {
+    const svg = currentSvg(); if(!svg) return;
+    const r = svg.getBoundingClientRect();
+    zoomAt(1/1.5, r.left + r.width/2, r.top + r.height/2);
+  });
+  zoomResetBtn.addEventListener('click', () => resetView(true));
+
   // ---------------- Segmented control ----------------
   let selectedMode = 'locate';
   const modeDetails = {
     locate: "We name a state — tap it on the map.",
-    name: "We highlight a state — you type its name."
+    name: "We highlight a state — you type its name.",
+    learn: "Tap any state to see its name and capital. No scoring, no timer pressure — just exploring."
+  };
+  const ctaLabels = {
+    locate: "Start quiz",
+    name: "Start quiz",
+    learn: "Start exploring"
   };
   const modeSeg = document.getElementById('modeSeg');
   const modeThumb = document.getElementById('modeThumb');
-  modeSeg.querySelectorAll('button').forEach((btn, i) => {
+  function positionThumb(btn){
+    modeThumb.style.width = btn.offsetWidth + 'px';
+    modeThumb.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+  }
+  modeSeg.querySelectorAll('button').forEach((btn) => {
     btn.addEventListener('click', () => {
       modeSeg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedMode = btn.dataset.mode;
-      modeThumb.style.transform = i === 0 ? 'translateX(0)' : 'translateX(100%)';
+      positionThumb(btn);
       document.getElementById('modeDetail').textContent = modeDetails[selectedMode];
+      document.getElementById('startBtn').textContent = ctaLabels[selectedMode];
     });
   });
+  window.addEventListener('resize', () => positionThumb(modeSeg.querySelector('button.active')));
+  window.addEventListener('load', () => positionThumb(modeSeg.querySelector('button.active')));
+  // position immediately too, in case load already fired
+  setTimeout(() => positionThumb(modeSeg.querySelector('button.active')), 0);
 
   let selectedRegion = 'all';
   document.querySelectorAll('.chip').forEach(chip => {
@@ -643,43 +900,65 @@ button, input{ font-family: inherit; }
       bestStreak: 0,
       missed: [],
       startTime: Date.now(),
-      timerHandle: null,
       locked: false,
       svg: null,
       paths: {}
     };
 
-    document.getElementById('mapPanel').classList.toggle('mode-name', game.mode === 'name');
+    const isLearn = game.mode === 'learn';
+    document.getElementById('mapPanel').classList.toggle('mode-name', game.mode === 'name' || isLearn);
     document.getElementById('nameInputRow').style.display = game.mode === 'name' ? 'flex' : 'none';
-    document.getElementById('promptLabel').textContent = game.mode === 'name' ? 'Name it' : 'Locate it';
+    document.getElementById('hintBtn').style.display = isLearn ? 'none' : 'flex';
+    document.getElementById('promptSub').style.display = isLearn ? 'block' : 'none';
+    document.getElementById('hudStreakItem').style.display = isLearn ? 'none' : 'flex';
+    document.getElementById('progressTrack').style.display = isLearn ? 'none' : 'block';
+    document.getElementById('quitBtn').textContent = isLearn ? 'Done' : 'End';
+    document.getElementById('promptLabel').textContent =
+      game.mode === 'name' ? 'Name it' : isLearn ? 'Learn' : 'Locate it';
 
     const mount = document.getElementById('mapMount');
     const svg = buildSVG(mount, shuffled, {drawIn:true});
     game.svg = svg;
+    resetView(false);
     svg.querySelectorAll('path').forEach(p => {
       game.paths[p.dataset.id] = p;
       if(game.mode === 'locate'){
         p.addEventListener('click', () => handleMapClick(p.dataset.id));
+      } else if(isLearn){
+        p.addEventListener('click', () => handleLearnClick(p.dataset.id));
       }
     });
 
     showScreen('screen-quiz');
-    updateHud();
-    startTimer();
-    nextQuestion();
 
-    if(game.mode === 'name'){
-      setTimeout(() => document.getElementById('nameInput').focus(), 350);
+    if(isLearn){
+      document.getElementById('promptText').textContent = 'Tap a state to begin';
+      document.getElementById('promptSub').textContent = '';
+    } else {
+      updateHud();
+      nextQuestion();
+      if(game.mode === 'name'){
+        setTimeout(() => document.getElementById('nameInput').focus(), 350);
+      }
     }
   }
 
-  function startTimer(){
-    if(game.timerHandle) clearInterval(game.timerHandle);
-    game.timerHandle = setInterval(() => {
-      const secs = Math.floor((Date.now() - game.startTime)/1000);
-      document.getElementById('hudTimer').textContent = fmtTime(secs);
-    }, 1000);
+  function handleLearnClick(id){
+    if(suppressNextClick) return;
+    const target = game.paths[id];
+    const state = game.queue.find(s => s.id === id);
+    if(!state) return;
+
+    if(game.currentLearnPath) game.currentLearnPath.classList.remove('visited-current');
+    target.classList.add('visited-current');
+    game.currentLearnPath = target;
+
+    document.getElementById('promptText').textContent = state.name;
+    document.getElementById('promptSub').textContent = 'Capital: ' + state.capital;
+    ping(game.svg, state.cx, state.cy, 'var(--tint)');
+    haptic();
   }
+
   function fmtTime(secs){
     const m = Math.floor(secs/60), s = secs%60;
     return m + ":" + String(s).padStart(2,'0');
@@ -687,7 +966,6 @@ button, input{ font-family: inherit; }
 
   function updateHud(){
     document.getElementById('hudStreak').textContent = game.streak;
-    document.getElementById('hudScore').textContent = game.score;
     document.getElementById('progressFill').style.width = (game.index/game.total*100) + "%";
   }
 
@@ -715,6 +993,7 @@ button, input{ font-family: inherit; }
   }
 
   function handleMapClick(id){
+    if(suppressNextClick) return;
     if(game.locked || game.mode !== 'locate') return;
     const target = currentTarget();
     game.locked = true;
@@ -801,14 +1080,20 @@ button, input{ font-family: inherit; }
   }
 
   function finishGame(){
-    clearInterval(game.timerHandle);
     const totalSecs = Math.floor((Date.now() - game.startTime)/1000);
-    const accuracy = game.total ? Math.round((game.score/game.total)*100) : 0;
+    document.getElementById('statTime').textContent = fmtTime(totalSecs);
+    const missedList = document.getElementById('missedList');
+    const missedSub = document.getElementById('missedSub');
+    missedList.innerHTML = '';
 
+    const accuracy = game.total ? Math.round((game.score/game.total)*100) : 0;
+    document.getElementById('missedTitle').textContent = 'Missed states';
+    document.getElementById('endEyebrow').textContent = 'Complete';
     document.getElementById('endScoreLine').textContent = game.score + " of " + game.total + " correct";
     document.getElementById('statAccuracy').textContent = accuracy + "%";
+    document.querySelector('#statAccuracy').nextElementSibling.textContent = 'ACCURACY';
     document.getElementById('statStreak').textContent = game.bestStreak;
-    document.getElementById('statTime').textContent = fmtTime(totalSecs);
+    document.querySelector('#statStreak').nextElementSibling.textContent = 'BEST STREAK';
 
     const headline = document.getElementById('endHeadline');
     if(accuracy === 100) headline.textContent = "Perfect score.";
@@ -816,9 +1101,6 @@ button, input{ font-family: inherit; }
     else if(accuracy >= 60) headline.textContent = "Good bearings.";
     else headline.textContent = "Worth another look.";
 
-    const missedList = document.getElementById('missedList');
-    const missedSub = document.getElementById('missedSub');
-    missedList.innerHTML = '';
     if(game.missed.length === 0){
       missedSub.textContent = "Nothing to revisit";
       const div = document.createElement('div');
@@ -846,7 +1128,10 @@ button, input{ font-family: inherit; }
     if(e.key === 'Enter') submitNameGuess();
   });
   document.getElementById('quitBtn').addEventListener('click', () => {
-    if(game){ game.total = game.index; finishGame(); }
+    if(!game) return;
+    if(game.mode === 'learn'){ showScreen('screen-start'); return; }
+    game.total = game.index;
+    finishGame();
   });
   document.getElementById('replayBtn').addEventListener('click', startGame);
   document.getElementById('menuBtn').addEventListener('click', () => showScreen('screen-start'));
