@@ -409,39 +409,32 @@ button, input{ font-family: inherit; }
 }
 .map-tooltip.show{ opacity:1; }
 
-.zoom-controls{
-  position:absolute;
-  top:12px; right:12px;
-  z-index:9;
-  display:flex; flex-direction:column;
-  align-items:center;
-  gap:1px;
+.map-toolbar{
+  display:flex; align-items:center; justify-content:center;
+  gap: 12px;
 }
-.zoom-controls button{
-  width:34px; height:34px;
+.map-toolbar button{
+  width:38px; height:38px;
   border:none;
-  background: var(--blur-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  border-radius:50%;
+  background: var(--panel-raised);
+  box-shadow: inset 0 0 0 0.5px var(--separator-soft);
   color: var(--label);
-  font-size:19px; font-weight:500;
+  font-size:20px; font-weight:500;
   line-height:1;
   display:flex; align-items:center; justify-content:center;
   cursor:pointer;
-  box-shadow: var(--shadow-1);
   transition: transform .15s var(--ease-standard);
 }
-.zoom-controls button:active{ transform: scale(0.88); }
-.zoom-controls #zoomInBtn{ border-radius: 12px 12px 3px 3px; }
-.zoom-controls #zoomOutBtn{ border-radius: 3px 3px 12px 12px; margin-bottom:8px; }
-.zoom-controls #zoomResetBtn{
-  border-radius: 50%;
+.map-toolbar button:active{ transform: scale(0.88); }
+.map-toolbar #zoomResetBtn{
+  width:30px; height:30px;
   opacity:0; pointer-events:none;
   transform: scale(0.7);
   transition: opacity .2s ease, transform .3s var(--ease-spring);
 }
-.zoom-controls #zoomResetBtn.visible{ opacity:1; pointer-events:auto; transform: scale(1); }
-.zoom-controls #zoomResetBtn svg{ width:16px; height:16px; }
+.map-toolbar #zoomResetBtn.visible{ opacity:1; pointer-events:auto; transform: scale(1); }
+.map-toolbar #zoomResetBtn svg{ width:15px; height:15px; }
 
 /* ---------- Dynamic-Island style toast ---------- */
 .island{
@@ -617,13 +610,13 @@ button, input{ font-family: inherit; }
           <div id="mapMount"></div>
           <div class="map-tooltip" id="mapTooltip"></div>
         </div>
-        <div class="zoom-controls">
-          <button id="zoomInBtn" aria-label="Zoom in">+</button>
-          <button id="zoomOutBtn" aria-label="Zoom out">−</button>
-          <button id="zoomResetBtn" aria-label="Reset view">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
-          </button>
-        </div>
+      </div>
+      <div class="map-toolbar">
+        <button id="zoomOutBtn" aria-label="Zoom out">−</button>
+        <button id="zoomResetBtn" aria-label="Reset view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+        </button>
+        <button id="zoomInBtn" aria-label="Zoom in">+</button>
       </div>
 
       <div class="card hud-card">
@@ -726,6 +719,13 @@ button, input{ font-family: inherit; }
 
   function currentSvg(){ return document.querySelector('#mapMount svg'); }
 
+  let rafPending = false;
+  function scheduleApply(){
+    if(rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => { rafPending = false; applyView(); });
+  }
+
   function applyView(){
     const svg = currentSvg();
     if(!svg) return;
@@ -749,7 +749,7 @@ button, input{ font-family: inherit; }
     let newX = Math.max(0, Math.min(FULL_VIEW.w - newW, vx - px * newW));
     let newY = Math.max(0, Math.min(FULL_VIEW.h - newH, vy - py * newH));
     view.x = newX; view.y = newY; view.w = newW; view.h = newH;
-    applyView();
+    scheduleApply();
   }
 
   function panBy(dxPx, dyPx){
@@ -761,7 +761,7 @@ button, input{ font-family: inherit; }
     const dy = dyPx / rect.height * view.h;
     view.x = Math.max(0, Math.min(FULL_VIEW.w - view.w, view.x - dx));
     view.y = Math.max(0, Math.min(FULL_VIEW.h - view.h, view.y - dy));
-    applyView();
+    scheduleApply();
   }
 
   function resetView(animated){
@@ -807,12 +807,18 @@ button, input{ font-family: inherit; }
   viewport.addEventListener('pointerdown', e => {
     pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
     dragMoved = false;
-    gestureActive = false;
     if(pointers.size === 1){
+      gestureActive = false;
       dragLast = {x:e.clientX, y:e.clientY};
     } else if(pointers.size === 2){
-      const pts = [...pointers.values()];
-      pinchStartDist = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      // Capture both fingers up front so the gesture never breaks if a finger
+      // drifts outside the map's bounds mid-pinch.
+      gestureActive = true;
+      dragMoved = true;
+      pointers.forEach((_, id) => {
+        try{ viewport.setPointerCapture(id); } catch(err){}
+      });
+      pinchStartDist = 0; // recomputed on the next move to avoid a startup jump
     }
   });
 
@@ -834,11 +840,6 @@ button, input{ font-family: inherit; }
       panBy(dx, dy);
       dragLast = {x:e.clientX, y:e.clientY};
     } else if(pointers.size === 2){
-      if(!gestureActive){
-        gestureActive = true;
-        dragMoved = true;
-        viewport.setPointerCapture(e.pointerId);
-      }
       const pts = [...pointers.values()];
       const dist = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
       const mid = {x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2};
@@ -852,6 +853,12 @@ button, input{ font-family: inherit; }
   function endPointer(e){
     pointers.delete(e.pointerId);
     viewport.classList.remove('panning');
+    if(pointers.size === 1){
+      // Dropped from a pinch to a single finger — resume panning from here, no jump.
+      const remaining = [...pointers.entries()][0];
+      dragLast = {x: remaining[1].x, y: remaining[1].y};
+      viewport.classList.add('panning');
+    }
     if(pointers.size < 2) pinchStartDist = 0;
     if(pointers.size === 0 && dragMoved){
       suppressNextClick = true;
