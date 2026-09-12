@@ -159,7 +159,7 @@ button, input{ font-family: inherit; }
 }
 .mode-tiles{
   display:grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -268,6 +268,9 @@ button, input{ font-family: inherit; }
 
 .prompt-card{
   padding: 18px 20px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.prompt-top{
   display:flex; align-items:center; justify-content:space-between; gap:14px;
   flex-wrap:wrap;
 }
@@ -284,6 +287,18 @@ button, input{ font-family: inherit; }
 .prompt-sub{
   font-size: 14px; color: var(--label-secondary); font-weight: 500;
   margin: 4px 0 0;
+}
+.flag-display{
+  width: 100%;
+  border-radius: 14px;
+  overflow:hidden;
+  background: var(--panel-raised);
+  box-shadow: inset 0 0 0 0.5px var(--separator-soft);
+  aspect-ratio: 5 / 3;
+  display:flex; align-items:center; justify-content:center;
+}
+.flag-display img{
+  width:100%; height:100%; object-fit:cover; display:block;
 }
 .icon-btn{
   display:flex; align-items:center; gap: 6px;
@@ -369,6 +384,7 @@ button, input{ font-family: inherit; }
 }
 .map-card path:active{ transform: scale(0.985); }
 .map-card path.done-correct{ fill: var(--map-fill-done); cursor:default; }
+.map-card path.flag-filled{ cursor:default; }
 .map-card path.flash-correct{ fill: var(--green); filter: drop-shadow(0 3px 10px rgba(48,209,88,0.55)); }
 .map-card path.flash-wrong{ fill: var(--red); filter: drop-shadow(0 3px 10px rgba(255,69,58,0.55)); }
 .map-card path.target-highlight{ fill: var(--tint); filter: drop-shadow(0 3px 12px rgba(10,132,255,0.6)); }
@@ -562,6 +578,10 @@ button, input{ font-family: inherit; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/></svg>
           <span class="tile-label">Learn</span>
         </button>
+        <button class="mode-tile" data-mode="flags">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4"/><path d="M4 4h15l-2.5 4L19 12H4"/></svg>
+          <span class="tile-label">Flags</span>
+        </button>
       </div>
       <div class="mode-detail" id="modeDetail">We name a state — tap it on the map.</div>
 
@@ -589,15 +609,20 @@ button, input{ font-family: inherit; }
   <section class="screen" id="screen-quiz">
     <div class="quiz-wrap">
       <div class="card prompt-card">
-        <div>
-          <span class="prompt-eyebrow" id="promptLabel">Locate</span>
-          <h2 id="promptText">—</h2>
-          <p class="prompt-sub" id="promptSub"></p>
+        <div class="prompt-top">
+          <div>
+            <span class="prompt-eyebrow" id="promptLabel">Locate</span>
+            <h2 id="promptText">—</h2>
+            <p class="prompt-sub" id="promptSub"></p>
+          </div>
+          <button class="icon-btn" id="hintBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Capital
+          </button>
         </div>
-        <button class="icon-btn" id="hintBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          Capital
-        </button>
+        <div class="flag-display" id="flagDisplay" style="display:none;">
+          <img id="flagImage" src="" alt="Flag to identify">
+        </div>
       </div>
 
       <div class="name-input-row" id="nameInputRow" style="display:none;">
@@ -704,6 +729,36 @@ button, input{ font-family: inherit; }
   }
 
   buildSVG(document.getElementById('heroMapPreview'), STATES, {decorative:true});
+
+  function ensureFlagPatterns(svg, ids){
+    const svgns = "http://www.w3.org/2000/svg";
+    const xlinkns = "http://www.w3.org/1999/xlink";
+    let defs = svg.querySelector('defs');
+    if(!defs){
+      defs = document.createElementNS(svgns, 'defs');
+      svg.insertBefore(defs, svg.firstChild);
+    }
+    ids.forEach(id => {
+      const patId = 'flagfill-' + id;
+      if(svg.querySelector('#' + patId)) return;
+      const pattern = document.createElementNS(svgns, 'pattern');
+      pattern.setAttribute('id', patId);
+      pattern.setAttribute('patternUnits', 'objectBoundingBox');
+      pattern.setAttribute('patternContentUnits', 'objectBoundingBox');
+      pattern.setAttribute('width', '1');
+      pattern.setAttribute('height', '1');
+      const image = document.createElementNS(svgns, 'image');
+      image.setAttributeNS(xlinkns, 'href', 'flags-png/' + id + '.png');
+      image.setAttribute('href', 'flags-png/' + id + '.png');
+      image.setAttribute('x', '0');
+      image.setAttribute('y', '0');
+      image.setAttribute('width', '1');
+      image.setAttribute('height', '1');
+      image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      pattern.appendChild(image);
+      defs.appendChild(pattern);
+    });
+  }
 
   // ---------------- Map zoom / pan / tooltip ----------------
   const FULL_VIEW = {x:0, y:0, w:975, h:610};
@@ -904,12 +959,14 @@ button, input{ font-family: inherit; }
   const modeDetails = {
     locate: "We name a state — tap it on the map.",
     name: "We highlight a state — you type its name.",
-    learn: "Tap any state to see its name and capital. No scoring, no timer pressure — just exploring."
+    learn: "Tap any state to see its name and capital. No scoring, no timer pressure — just exploring.",
+    flags: "We show a state's flag — tap the matching state. Get it right and the flag paints into the map."
   };
   const ctaLabels = {
     locate: "Start quiz",
     name: "Start quiz",
-    learn: "Start exploring"
+    learn: "Start exploring",
+    flags: "Start quiz"
   };
   const modeSeg = document.getElementById('modeSeg');
   modeSeg.querySelectorAll('button').forEach((btn) => {
@@ -996,8 +1053,10 @@ button, input{ font-family: inherit; }
     };
 
     const isLearn = game.mode === 'learn';
+    const isFlags = game.mode === 'flags';
     document.getElementById('mapPanel').classList.toggle('mode-name', game.mode === 'name' || isLearn);
     document.getElementById('nameInputRow').style.display = game.mode === 'name' ? 'flex' : 'none';
+    document.getElementById('flagDisplay').style.display = isFlags ? 'flex' : 'none';
     document.getElementById('hintBtn').style.display = isLearn ? 'none' : 'flex';
     document.getElementById('promptSub').style.display = isLearn ? 'block' : 'none';
     document.getElementById('hudStreakItem').style.display = isLearn ? 'none' : 'flex';
@@ -1005,15 +1064,16 @@ button, input{ font-family: inherit; }
     document.getElementById('hudTimerItem').style.display = isLearn ? 'none' : 'flex';
     document.getElementById('quitBtn').textContent = isLearn ? 'Done' : 'End';
     document.getElementById('promptLabel').textContent =
-      game.mode === 'name' ? 'Name it' : isLearn ? 'Learn' : 'Locate it';
+      game.mode === 'name' ? 'Name it' : game.mode === 'flags' ? 'Flags' : isLearn ? 'Learn' : 'Locate it';
 
     const mount = document.getElementById('mapMount');
     const svg = buildSVG(mount, shuffled, {drawIn:true});
     game.svg = svg;
     resetView(false);
+    if(isFlags) ensureFlagPatterns(svg, shuffled.map(s => s.id));
     svg.querySelectorAll('path').forEach(p => {
       game.paths[p.dataset.id] = p;
-      if(game.mode === 'locate'){
+      if(game.mode === 'locate' || isFlags){
         p.addEventListener('click', () => handleMapClick(p.dataset.id));
       } else if(isLearn){
         p.addEventListener('click', () => handleLearnClick(p.dataset.id));
@@ -1080,6 +1140,9 @@ button, input{ font-family: inherit; }
 
     if(game.mode === 'locate'){
       document.getElementById('promptText').textContent = target.name;
+    } else if(game.mode === 'flags'){
+      document.getElementById('promptText').textContent = 'Which state is this?';
+      document.getElementById('flagImage').src = 'flags/' + target.id + '.svg';
     } else {
       document.getElementById('promptText').textContent = 'Which state is this?';
       const p = game.paths[target.id];
@@ -1094,7 +1157,7 @@ button, input{ font-family: inherit; }
 
   function handleMapClick(id){
     if(suppressNextClick) return;
-    if(game.locked || game.mode !== 'locate') return;
+    if(game.locked || (game.mode !== 'locate' && game.mode !== 'flags')) return;
     const target = currentTarget();
     game.locked = true;
     const clickedPath = game.paths[id];
@@ -1118,7 +1181,15 @@ button, input{ font-family: inherit; }
     setTimeout(() => {
       clickedPath.classList.remove('flash-correct','flash-wrong');
       const correctPath = game.paths[target.id];
-      if(correctPath){ correctPath.classList.remove('reveal-correct'); correctPath.classList.add('done-correct'); }
+      if(correctPath){
+        correctPath.classList.remove('reveal-correct');
+        if(game.mode === 'flags'){
+          correctPath.style.fill = 'url(#flagfill-' + target.id + ')';
+          correctPath.classList.add('flag-filled');
+        } else {
+          correctPath.classList.add('done-correct');
+        }
+      }
       advance();
     }, 900);
   }
