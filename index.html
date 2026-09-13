@@ -90,6 +90,7 @@ body{
     top: 90px;
   }
   .hero h1{ font-size: clamp(40px, 5.2vw, 58px); }
+  .map-card{ margin: 0 -32px; }
 }
 
 button, input{ font-family: inherit; }
@@ -347,6 +348,7 @@ button, input{ font-family: inherit; }
 
 .map-card{
   padding: 6px;
+  margin: 0 -16px;
   position:relative;
   overflow: visible;
   isolation: isolate;
@@ -1142,7 +1144,7 @@ button, input{ font-family: inherit; }
       document.getElementById('promptText').textContent = target.name;
     } else if(game.mode === 'flags'){
       document.getElementById('promptText').textContent = 'Which state is this?';
-      document.getElementById('flagImage').src = 'flags/' + target.id + '.svg';
+      document.getElementById('flagImage').src = 'flags/' + target.id + '.png';
     } else {
       document.getElementById('promptText').textContent = 'Which state is this?';
       const p = game.paths[target.id];
