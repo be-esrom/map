@@ -70,10 +70,35 @@ body{
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   color: var(--label);
   display:flex; justify-content:center;
-  padding: 0 0 60px;
+  padding: 0 0 100px;
   font-variant-numeric: tabular-nums;
 }
 #app{ width:100%; max-width: 900px; padding: 0 20px; }
+
+.tab-bar{
+  position: fixed;
+  left:0; right:0; bottom:0;
+  z-index: 40;
+  display:flex;
+  padding: 8px 4px calc(20px + env(safe-area-inset-bottom, 0px));
+  background: var(--blur-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 -0.5px 0 var(--separator);
+}
+.tab-btn{
+  flex:1;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:none;
+  color: var(--label-secondary);
+  padding: 4px 2px;
+  cursor:pointer;
+  transition: transform 0.15s var(--ease-standard), color 0.2s ease;
+}
+.tab-btn svg{ width:24px; height:24px; }
+.tab-btn span{ font-size:10px; font-weight:600; letter-spacing:0.01em; }
+.tab-btn.active{ color: var(--tint); }
+.tab-btn:active{ transform: scale(0.92); }
 
 @media (min-width: 760px){
   #app{ max-width: 1080px; }
@@ -259,8 +284,8 @@ button, input{ font-family: inherit; }
 }
 
 .hero-map-card{
-  margin-top: 22px;
-  padding: 8px;
+  margin: 20px -20px -8px;
+  padding: 0;
 }
 .hero-map-card svg path{ fill: var(--map-fill); stroke: var(--map-stroke); stroke-width: 1; }
 
@@ -347,18 +372,18 @@ button, input{ font-family: inherit; }
 .name-input-row button:active{ transform: scale(0.95); opacity:.88; }
 
 .map-card{
-  padding: 6px;
-  margin: 0 -16px;
+  padding: 0;
+  margin: 0 -20px;
   position:relative;
   overflow: visible;
   isolation: isolate;
 }
 .map-card.learn-active{
   margin: 0 -20px;
-  padding: 3px;
+  padding: 0;
 }
 @media (min-width: 760px){
-  .map-card.learn-active{ margin: 0 -32px; }
+  .map-card{ margin: 0 -40px; }
 }
 .map-card::before{
   content:"";
@@ -716,28 +741,7 @@ button, input{ font-family: inherit; }
     <div class="hero">
       <div class="hero-content">
       <h1>Learn the map<br><span>fifty states at a time.</span></h1>
-      <p class="lede">Locate states by name, or name them on sight. Choose how you'd like to play.</p>
-
-      <div class="field-label">Mode</div>
-      <div class="mode-tiles" id="modeSeg">
-        <button class="mode-tile active" data-mode="locate">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span class="tile-label">Locate it</span>
-        </button>
-        <button class="mode-tile" data-mode="name">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>
-          <span class="tile-label">Name it</span>
-        </button>
-        <button class="mode-tile" data-mode="learn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/></svg>
-          <span class="tile-label">Learn</span>
-        </button>
-        <button class="mode-tile" data-mode="flags">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4"/><path d="M4 4h15l-2.5 4L19 12H4"/></svg>
-          <span class="tile-label">Flags</span>
-        </button>
-      </div>
-      <div class="mode-detail" id="modeDetail">We name a state — tap it on the map.</div>
+      <p class="lede" id="lede">We name a state — tap it on the map.</p>
 
       <div class="field-label">Region</div>
       <div class="chip-row" id="regionRow">
@@ -753,7 +757,7 @@ button, input{ font-family: inherit; }
       <button class="btn-primary" id="startBtn">Start quiz</button>
       </div>
 
-      <div class="card hero-map-card" id="heroMapWrap">
+      <div class="hero-map-card" id="heroMapWrap">
         <div id="heroMapPreview"></div>
       </div>
     </div>
@@ -789,7 +793,7 @@ button, input{ font-family: inherit; }
         <button id="nameSubmit">Guess</button>
       </div>
 
-      <div class="card map-card" id="mapPanel">
+      <div class="map-card" id="mapPanel">
         <div class="map-viewport" id="mapViewport">
           <div id="mapMount"></div>
           <div class="map-tooltip" id="mapTooltip"></div>
@@ -868,6 +872,25 @@ button, input{ font-family: inherit; }
   </section>
 
 </div>
+
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-mode="locate">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span>Locate it</span>
+  </button>
+  <button class="tab-btn" data-mode="name">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>
+    <span>Name it</span>
+  </button>
+  <button class="tab-btn" data-mode="flags">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4"/><path d="M4 4h15l-2.5 4L19 12H4"/></svg>
+    <span>Flags</span>
+  </button>
+  <button class="tab-btn" data-mode="learn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/></svg>
+    <span>Learn</span>
+  </button>
+</nav>
 
 <div class="island" id="island">
   <span class="dot"></span>
@@ -1283,15 +1306,22 @@ button, input{ font-family: inherit; }
     learn: "Start exploring",
     flags: "Start quiz"
   };
-  const modeSeg = document.getElementById('modeSeg');
-  modeSeg.querySelectorAll('button').forEach((btn) => {
+  const tabBar = document.getElementById('tabBar');
+  function syncActiveTab(mode){
+    tabBar.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  }
+  tabBar.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      modeSeg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
       selectedMode = btn.dataset.mode;
-      document.getElementById('modeDetail').textContent = modeDetails[selectedMode];
+      syncActiveTab(selectedMode);
+      document.getElementById('lede').textContent = modeDetails[selectedMode];
       document.getElementById('startBtn').textContent = ctaLabels[selectedMode];
       renderHighScoreLine();
+      // Already mid-experience (not just browsing Home/Leaderboard) — switch on the spot.
+      const activeScreen = document.querySelector('.screen.active');
+      if(activeScreen && activeScreen.id !== 'screen-start' && activeScreen.id !== 'screen-leaderboard'){
+        startGame();
+      }
     });
   });
 
@@ -1403,6 +1433,7 @@ button, input{ font-family: inherit; }
   let game = null;
 
   function startGame(){
+    syncActiveTab(selectedMode);
     const pool = STATES.filter(s => selectedRegion === 'all' || s.region === selectedRegion);
     const shuffled = pool.slice().sort(() => Math.random() - 0.5);
     game = {
