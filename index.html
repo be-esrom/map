@@ -353,6 +353,13 @@ button, input{ font-family: inherit; }
   overflow: visible;
   isolation: isolate;
 }
+.map-card.learn-active{
+  margin: 0 -20px;
+  padding: 3px;
+}
+@media (min-width: 760px){
+  .map-card.learn-active{ margin: 0 -32px; }
+}
 .map-card::before{
   content:"";
   position:absolute;
@@ -427,6 +434,59 @@ button, input{ font-family: inherit; }
 }
 .map-tooltip.show{ opacity:1; }
 
+.map-list-toggle{
+  display:flex;
+  align-self:center;
+  background: var(--panel-raised);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.mlt-btn{
+  border:none; background:transparent;
+  padding: 8px 22px;
+  font-size: 14px; font-weight: 600;
+  color: var(--label-secondary);
+  border-radius: 999px;
+  cursor:pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.mlt-btn.active{ background: var(--panel); color: var(--label); box-shadow: var(--shadow-1); }
+
+.state-list-panel{
+  max-height: 480px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.state-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 13px 20px;
+  border-top: 0.5px solid var(--separator-soft);
+  cursor:pointer;
+  background:none; border-left:none; border-right:none; border-bottom:none;
+  width:100%; text-align:left; font-family:inherit;
+}
+.state-row:first-child{ border-top:none; }
+.state-row:active{ background: var(--panel-raised); }
+.state-row .sr-name{ font-size:15px; font-weight:600; color:var(--label); }
+.state-row .sr-cap{ font-size:12.5px; color:var(--label-secondary); }
+
+.learn-float-card{
+  padding: 20px 22px;
+  box-shadow: var(--shadow-1), 0 12px 28px rgba(0,0,0,0.35);
+}
+.lfc-eyebrow{
+  font-size: 12px; font-weight: 700; color: var(--tint);
+  text-transform: uppercase; letter-spacing: 0.02em;
+  display:block; margin-bottom: 4px;
+}
+.learn-float-card h3{
+  font-size: 22px; font-weight:700; letter-spacing:-0.01em; margin:0;
+}
+.learn-float-card p{
+  font-size: 14px; color: var(--label-secondary); margin: 4px 0 0;
+}
+
 .map-toolbar{
   display:flex; align-items:center; justify-content:center;
   gap: 12px;
@@ -455,6 +515,78 @@ button, input{ font-family: inherit; }
 .map-toolbar #zoomResetBtn svg{ width:15px; height:15px; }
 
 /* ---------- Dynamic-Island style toast ---------- */
+.nav-icon-btn{
+  display:flex; align-items:center; gap:5px;
+  background: var(--panel-raised);
+  border:none;
+  color: var(--label-secondary);
+  font-size: 12px; font-weight:600;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor:pointer;
+  margin-left: 6px;
+  transition: transform 0.15s var(--ease-standard);
+  white-space:nowrap;
+}
+.nav-icon-btn svg{ width:15px; height:15px; flex-shrink:0; }
+.nav-icon-btn:active{ transform: scale(0.92); }
+#usernameLabel{ max-width:80px; overflow:hidden; text-overflow:ellipsis; }
+
+.modal-backdrop{
+  position: fixed; inset:0; z-index:60;
+  background: rgba(0,0,0,0.55);
+  display:flex; align-items:center; justify-content:center;
+  padding: 24px;
+}
+.modal-card{
+  width:100%; max-width:340px;
+  padding: 26px 24px;
+}
+.modal-card h3{ font-size:19px; font-weight:700; margin:0 0 8px; }
+.modal-card p{ font-size:13.5px; color:var(--label-secondary); line-height:1.4; margin:0 0 18px; }
+.modal-card input{
+  width:100%;
+  font-size:16px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border:none;
+  background: var(--panel-raised);
+  color: var(--label);
+  box-shadow: inset 0 0 0 1px var(--separator-soft);
+  outline:none;
+  margin-bottom: 18px;
+}
+.modal-card input:focus{ box-shadow: inset 0 0 0 2px var(--tint); }
+.modal-actions{ display:flex; justify-content:flex-end; align-items:center; gap:6px; }
+
+.lb-wrap{ padding-top:2px; }
+.lb-header{ padding: 4px 4px 18px; }
+.lb-header h2{
+  font-size: clamp(26px,5vw,36px); font-weight:800; letter-spacing:-0.02em;
+  margin: 4px 0 2px;
+}
+.lb-subtitle{ font-size:14px; color:var(--label-secondary); margin:0; }
+.lb-list{ padding: 8px 0; }
+.lb-empty{ padding: 40px 24px; text-align:center; color:var(--label-secondary); font-size:14px; }
+.lb-row{
+  display:flex; align-items:center; gap:14px;
+  padding: 13px 20px;
+  border-top: 0.5px solid var(--separator-soft);
+}
+.lb-row:first-child{ border-top:none; }
+.lb-row.me{ background: rgba(10,132,255,0.10); }
+.lb-rank{
+  width:26px; text-align:center;
+  font-size:14px; font-weight:800; color:var(--label-secondary);
+  flex-shrink:0;
+}
+.lb-row:nth-child(1) .lb-rank{ color:#ffd60a; }
+.lb-row:nth-child(2) .lb-rank{ color:#c7c7cc; }
+.lb-row:nth-child(3) .lb-rank{ color:#d19a5c; }
+.lb-name{ flex:1; font-size:15px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lb-score{ font-size:14px; font-weight:700; text-align:right; }
+.lb-time{ font-size:11.5px; color:var(--label-secondary); text-align:right; display:block; }
+
 .island{
   position: fixed;
   top: 12px; left:50%;
@@ -553,9 +685,29 @@ button, input{ font-family: inherit; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>
       Home
     </button>
-    <div>
+    <div style="flex:1;">
       <div class="title">States</div>
       <div class="subtitle">A geography quiz</div>
+    </div>
+    <button class="nav-icon-btn" id="usernameBtn" aria-label="Change username">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+      <span id="usernameLabel">Guest</span>
+    </button>
+    <button class="nav-icon-btn" id="leaderboardBtn" aria-label="Leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4a1 1 0 0 0-1 1c0 3 2 5 4 5M17 6h3a1 1 0 0 1 1 1c0 3-2 5-4 5"/></svg>
+    </button>
+  </div>
+
+  <!-- USERNAME MODAL -->
+  <div class="modal-backdrop" id="usernameModal" style="display:none;">
+    <div class="card modal-card">
+      <h3>Choose a username</h3>
+      <p>This is how you'll appear on the leaderboard. Visible to everyone who plays.</p>
+      <input type="text" id="usernameInput" maxlength="20" placeholder="e.g. MapMaster" autocomplete="off" autocapitalize="words">
+      <div class="modal-actions">
+        <button class="btn-text" id="usernameCancelBtn">Skip</button>
+        <button class="btn-primary" id="usernameSaveBtn" style="width:auto; padding:12px 24px;">Save</button>
+      </div>
     </div>
   </div>
 
@@ -627,6 +779,11 @@ button, input{ font-family: inherit; }
         </div>
       </div>
 
+      <div class="map-list-toggle" id="mapListToggle" style="display:none;">
+        <button class="mlt-btn active" data-view="map">Map</button>
+        <button class="mlt-btn" data-view="list">List</button>
+      </div>
+
       <div class="name-input-row" id="nameInputRow" style="display:none;">
         <input type="text" id="nameInput" placeholder="Type the state name…" autocomplete="off" autocapitalize="words" spellcheck="false">
         <button id="nameSubmit">Guess</button>
@@ -638,12 +795,20 @@ button, input{ font-family: inherit; }
           <div class="map-tooltip" id="mapTooltip"></div>
         </div>
       </div>
-      <div class="map-toolbar">
+      <div class="map-toolbar" id="mapToolbar">
         <button id="zoomOutBtn" aria-label="Zoom out">−</button>
         <button id="zoomResetBtn" aria-label="Reset view">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
         </button>
         <button id="zoomInBtn" aria-label="Zoom in">+</button>
+      </div>
+
+      <div class="card state-list-panel" id="stateListPanel" style="display:none;"></div>
+
+      <div class="card learn-float-card" id="learnFloatCard" style="display:none;">
+        <span class="lfc-eyebrow">LEARN</span>
+        <h3 id="learnFloatTitle">Tap a state to begin</h3>
+        <p id="learnFloatSub"></p>
       </div>
 
       <div class="card hud-card">
@@ -676,6 +841,7 @@ button, input{ font-family: inherit; }
         </div>
 
         <button class="btn-primary" id="replayBtn" style="margin-bottom:10px;">Play again</button>
+        <button class="btn-text" id="endLeaderboardBtn">View leaderboard</button>
         <button class="btn-text" id="menuBtn">Change mode</button>
       </div>
 
@@ -683,6 +849,20 @@ button, input{ font-family: inherit; }
         <h3 id="missedTitle">Missed states</h3>
         <span class="sub" id="missedSub">States to revisit</span>
         <div id="missedList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD SCREEN -->
+  <section class="screen" id="screen-leaderboard">
+    <div class="lb-wrap">
+      <div class="lb-header">
+        <span class="prompt-eyebrow" id="lbEyebrow">LEADERBOARD</span>
+        <h2 id="lbTitle">Locate it</h2>
+        <p class="lb-subtitle" id="lbSubtitle">All 50 states</p>
+      </div>
+      <div class="card lb-list" id="lbList">
+        <div class="lb-empty">Loading…</div>
       </div>
     </div>
   </section>
@@ -695,12 +875,145 @@ button, input{ font-family: inherit; }
 </div>
 
 <script id="states-data" type="application/json">[{"id":"AL","name":"Alabama","capital":"Montgomery","region":"South","d":"M648,492.4L648,492.4L648,492.4ZM641.6,384L689.2,379.7L709.5,439.9L710.8,468.8L660.7,474L663.7,490.1L646.5,489.5L642.2,455Z","cx":672.06,"cy":431.88,"bounds":[[641.5768735011593,379.6756445206893],[710.7518137543057,492.4312379762283]]},{"id":"AK","name":"Alaska","capital":"Juneau","region":"West","d":"M111,545L111,545L111,545ZM109.7,559.5L109.7,559.5L109.7,559.5ZM106.7,561.1L106.7,561.1L106.7,561.1ZM105.9,561.2L105.9,561.2L105.9,561.2ZM105.3,561L105.3,561L105.3,561ZM105.5,568.5L105.5,568.5L105.5,568.5ZM104.5,562.9L104.5,562.9L104.5,562.9ZM104.2,551.6L104.2,551.6L104.2,551.6ZM103.4,563L103.4,563L103.4,563ZM102,553.1L102,553.1L102,553.1ZM99.1,569.9L99.1,569.9L99.1,569.9ZM98.4,559.3L98.4,559.3L98.4,559.3ZM96,580.8L96,580.8L96,580.8ZM95.1,582L95.1,582L95.1,582ZM93.3,575.4L103.1,570.6L96.8,580.4ZM93.1,582.9L93.1,582.9L93.1,582.9ZM88.9,587.6L88.9,587.6L88.9,587.6ZM84.5,585.8L84.5,585.8L84.5,585.8ZM84.3,584.5L84.3,584.5L84.3,584.5ZM82.1,581.7L82.1,581.7L82.1,581.7ZM79.5,583.1L79.5,583.1L79.5,583.1ZM74.9,586.9L74.9,586.9L74.9,586.9ZM73.8,586.4L73.8,586.4L73.8,586.4ZM72.4,594.1L72.4,594.1L72.4,594.1ZM72.7,587.3L72.7,587.3L72.7,587.3ZM71.8,593.7L71.8,593.7L71.8,593.7ZM71.1,594.7L71.1,594.7L71.1,594.7ZM71,591.7L71,591.7L71,591.7ZM70.1,594.5L70.1,594.5L70.1,594.5ZM70.1,592.7L70.1,592.7L70.1,592.7ZM69.1,590.4L69.1,590.4L69.1,590.4ZM68.2,593.5L68.2,593.5L68.2,593.5ZM70.7,563.6L70.7,563.6L70.7,563.6ZM68.1,589.5L68.1,589.5L68.1,589.5ZM70.2,563.7L70.2,563.7L70.2,563.7ZM65.8,590.1L65.8,590.1L65.8,590.1ZM67.5,564.2L67.5,564.2L67.5,564.2ZM63.1,590.7L63.1,590.7L63.1,590.7ZM61.9,590.5L61.9,590.5L61.9,590.5ZM60.9,591.2L60.9,591.2L60.9,591.2ZM58.3,592.4L58.3,592.4L58.3,592.4ZM66.1,523.9L66.1,523.9L66.1,523.9ZM56,595.9L56,595.9L56,595.9ZM55.5,588L55.5,588L55.5,588ZM46.4,596.4L46.4,596.4L46.4,596.4ZM44.6,597L44.6,597L44.6,597ZM43.4,597L43.4,597L43.4,597ZM42.9,597.2L42.9,597.2L42.9,597.2ZM42.7,595.5L42.7,595.5L42.7,595.5ZM40.6,595.9L40.6,595.9L40.6,595.9ZM40,597.1L40,597.1L40,597.1ZM44.2,547.5L49.5,546.7L48.4,552ZM31.3,600.8L37.9,596.5L36.6,600.9ZM50.7,504.5L63.9,499.5L65.2,503.9L74.3,503.7L72.4,497L66.5,495.6L66.2,492.3L59.4,484.6L61.5,480.8L67.2,481.3L75.3,471.4L81.6,468.4L85.9,468.4L89.3,465.1L95.1,468.8L101.4,468.7L104.4,472.1L108.9,470.8L121.6,473.8L126,471.7L132.9,474.4L147.3,547.1L154.6,547.3L163.6,554.8L169.4,545.9L180.8,553.8L191.6,565.6L200.1,566.6L202.9,572.6L201.4,577.9L189.2,570.5L188.2,565.4L183.2,563.5L170.9,549.7L174.7,557.7L168.4,559.2L160,554.5L151,551.3L140.2,550.1L135.3,551.6L123.1,544.2L118.4,547.4L121.1,552.9L115.2,554L106.4,561L106.3,546.2L100.5,556.9L95.6,561.3L99.1,562.7L92.5,570.3L77,582.9L76.7,585.8L46.7,594.8L49.3,591.1L56.5,590.1L62,585.1L68.7,582.8L81,573.4L83.9,563.2L75.8,566.3L71,560.7L64.7,564.1L65.8,556.7L63.8,551.1L58.3,553.3L52.5,546.3L54.9,542.8L51.1,538.2L61,525.8L64.3,527.9L73,523.2L72.5,514L67.6,516.5L55.2,514.1L55.5,508.2ZM24.9,603L24.9,603L24.9,603ZM23.7,603.5L23.7,603.5L23.7,603.5ZM21.8,601.4L21.8,601.4L21.8,601.4ZM28.5,573.3L28.5,573.3L28.5,573.3ZM21.9,600.6L21.9,600.6L21.9,600.6ZM20.4,602.1L20.4,602.1L20.4,602.1ZM20,601.6L20,601.6L20,601.6ZM19.3,602.9L19.3,602.9L19.3,602.9ZM26.9,568.3L26.9,568.3L26.9,568.3ZM16,603L16,603L16,603ZM14.5,602.8L14.5,602.8L14.5,602.8ZM13.6,603.2L13.6,603.2L13.6,603.2ZM34.5,517.8L39.3,517.9L44.8,522.4L40.8,524.5ZM7,603L7,603L7,603ZM23.4,539.9L23.4,539.9L23.4,539.9ZM23.8,538.3L23.8,538.3L23.8,538.3ZM0,602.3L0,602.3L0,602.3ZM-6.3,601.2L-6.3,601.2L-6.3,601.2ZM-7.2,601.2L-7.2,601.2L-7.2,601.2ZM-6.8,599.7L-6.8,599.7L-6.8,599.7ZM-8.3,601L-8.3,601L-8.3,601ZM-9.3,600.5L-9.3,600.5L-9.3,600.5ZM-10.2,599.4L-10.2,599.4L-10.2,599.4ZM-11,601.2L-11,601.2L-11,601.2ZM-15,601.4L-15,601.4L-15,601.4ZM-16.5,598.5L-16.5,598.5L-16.5,598.5ZM-18.1,599.6L-18.1,599.6L-18.1,599.6ZM-20.1,597.5L-20.1,597.5L-20.1,597.5ZM-22.9,598.6L-22.9,598.6L-22.9,598.6ZM-23.8,598.6L-23.8,598.6L-23.8,598.6ZM-23.3,596.9L-23.3,596.9L-23.3,596.9ZM-25,599.8L-25,599.8L-25,599.8ZM-26,600.2L-26,600.2L-26,600.2ZM-30.2,592.5L-30.2,592.5L-30.2,592.5ZM-35.2,593.3L-35.2,593.3L-35.2,593.3ZM-34.9,590.5L-34.9,590.5L-34.9,590.5ZM-36.3,591.2L-36.3,591.2L-36.3,591.2ZM-36.3,589.4L-36.3,589.4L-36.3,589.4ZM-40.7,588.6L-40.7,588.6L-40.7,588.6ZM-45,582.4L-45,582.4L-45,582.4ZM-51.5,575.9L-51.5,575.9L-51.5,575.9ZM-52,575.5L-52,575.5L-52,575.5ZM-52.3,575.2L-52.3,575.2L-52.3,575.2ZM-55.8,576.6L-55.8,576.6L-55.8,576.6ZM-57.6,570.9L-57.6,570.9L-57.6,570.9ZM198.1,576L198.1,576L198.1,576ZM197.4,577.4L197.4,577.4L197.4,577.4ZM196.8,577.7L196.8,577.7L196.8,577.7ZM196.5,577L196.5,577L196.5,577ZM194.7,574.9L194.7,574.9L194.7,574.9ZM189.1,567.2L189.1,567.2L189.1,567.2ZM189.2,568.3L189.2,568.3L189.2,568.3ZM188.5,567.6L188.5,567.6L188.5,567.6ZM191.3,579.3L191.3,579.3L191.3,579.3ZM187.6,570L187.6,570L187.6,570ZM187.1,569.1L187.1,569.1L187.1,569.1ZM188.3,576.5L188.3,576.5L188.3,576.5ZM188.6,581.1L188.6,581.1L188.6,581.1ZM186.4,575.5L186.4,575.5L186.4,575.5ZM186,575.2L186,575.2L186,575.2ZM186.2,576.9L186.2,576.9L186.2,576.9ZM184.9,573.1L186.8,569.5L193.3,574.6L195.7,580.1ZM181.4,563L181.4,563L181.4,563ZM184.5,573.7L184.5,573.7L184.5,573.7ZM182.7,574.2L182.7,574.2L182.7,574.2ZM180.3,567.2L185.4,564.3L188.7,566.7L182.7,572.5ZM174.6,555.9L181.2,561.8L179.6,565.9ZM174,555.1L174,555.1L174,555.1ZM171.6,551.7L171.6,551.7L171.6,551.7ZM173.9,564.8L177.3,563.4L180.8,572.6ZM171.6,557.1L171.6,557.1L171.6,557.1ZM173.5,565.9L173.5,565.9L173.5,565.9ZM169.4,555.8L169.4,555.8L169.4,555.8ZM170,558.2L170,558.2L170,558.2ZM169.1,561.4L171.5,557.8L177.1,562.7L173.8,564.8ZM129.2,549.5L129.2,549.5L129.2,549.5ZM127.8,549.4L127.8,549.4L127.8,549.4ZM122.3,546.2L122.3,546.2L122.3,546.2ZM121.8,548L121.8,548L121.8,548ZM122.1,551.2L122.1,551.2L122.1,551.2ZM120.8,555.1L120.8,555.1L120.8,555.1ZM120.4,551.4L120.4,551.4L120.4,551.4ZM119.8,547.6L119.8,547.6L119.8,547.6Z","cx":103.01,"cy":522.12,"bounds":[[-57.64155890993642,465.05727610005454],[202.90638219900904,603.5037413828724]]},{"id":"AZ","name":"Arizona","capital":"Phoenix","region":"West","d":"M145.1,407L162.7,374.6L156.8,356.2L159.5,331.3L176,313.3L264.6,328L246.9,456.3L208.1,450.5L142.3,411.7Z","cx":207.99,"cy":381.54,"bounds":[[142.32983162380077,313.2980311638221],[264.643580850567,456.25881106915585]]},{"id":"AR","name":"Arkansas","capital":"Little Rock","region":"South","d":"M523,355.3L603.6,352.2L611.9,363.1L602.8,386.7L589.7,411.2L589.4,433.1L535,434.7L534.7,422.5L534.7,422.5L526.4,420.7Z","cx":563.22,"cy":390.38,"bounds":[[522.9632378486099,352.23276240772134],[611.8932893650816,434.67059833449366]]},{"id":"CA","name":"California","capital":"Sacramento","region":"West","d":"M77.2,374.3L77.2,374.3L77.2,374.3ZM74.7,384.2L74.7,384.2L74.7,384.2ZM69,372L69,372L69,372ZM65.1,358.4L65.1,358.4L65.1,358.4ZM58.3,374.3L58.3,374.3L58.3,374.3ZM56.6,355L56.6,355L56.6,355ZM50.3,355.2L50.3,355.2L50.3,355.2ZM46.8,353.4L46.8,353.4L46.8,353.4ZM32.6,159.9L100.5,179.2L100.4,179.2L83.3,245.5L156.8,356.2L162.7,374.6L145.1,407L99.5,401.7L81.3,362.1L48.8,344.2L49.8,328.5L31.5,274.3L35.9,257.2L20.1,229L18.5,197.2Z","cx":82.33,"cy":288.25,"bounds":[[18.47253947455954,159.94355508973365],[162.6520750312526,407.04550239569494]]},{"id":"CO","name":"Colorado","capital":"Denver","region":"West","d":"M277.1,237.2L361.4,246.6L395.3,249.1L393.8,271.9L389.7,340.7L372.5,339.3L264.6,328Z","cx":331.6,"cy":289.47,"bounds":[[264.643580850567,237.17569954723615],[395.3006519620913,340.7027753977359]]},{"id":"CT","name":"Connecticut","capital":"Hartford","region":"Northeast","d":"M871.2,184L898.8,178L901.8,193.5L874,208.3Z","cx":885.48,"cy":191.39,"bounds":[[871.172239444742,178.02057236102235],[901.7531113104136,208.31636954911357]]},{"id":"DE","name":"Delaware","capital":"Dover","region":"South","d":"M849.2,245.8L849.3,246.4L849.2,245.8ZM844.8,244.6L850.7,241.5L849.7,244.4L863.7,270.3L852.6,272.5Z","cx":853.28,"cy":259.3,"bounds":[[844.8321783568031,241.44994030792975],[863.6813765000365,272.50720476427523]]},{"id":"DC","name":"District of Columbia","capital":"Washington","region":"South","d":"M825.9,267L827.9,269.9L825.9,267Z","cx":826.92,"cy":268.45,"bounds":[[825.9150954854557,266.989055787453],[827.9155775866178,269.91821854266004]]},{"id":"FL","name":"Florida","capital":"Tallahassee","region":"South","d":"M814.6,594.4L814.6,594.4L814.6,594.4ZM812.7,596L812.7,596L812.7,596ZM807.4,599L807.4,599L807.4,599ZM793.7,604.2L793.7,604.2L793.7,604.2ZM789.6,605.4L789.6,605.4L789.6,605.4ZM786.4,605.5L786.4,605.5L786.4,605.5ZM777.4,558.3L777.4,558.3L777.4,558.3ZM770.3,606.2L770.3,606.2L770.3,606.2ZM720.4,495.2L720.4,495.2L720.4,495.2ZM710.8,468.8L714.2,475L780.2,466.1L820,544.3L823.7,573.7L806.9,589.7L762,534L761.9,510.2L727.4,487.4L713.6,500.8L694.9,488L663.7,490.1L660.7,474Z","cx":765.16,"cy":512.75,"bounds":[[660.7066692707006,466.05300616922966],[823.713999410176,606.1840151879899]]},{"id":"GA","name":"Georgia","capital":"Atlanta","region":"South","d":"M689.2,379.7L712.7,376.8L734.9,373.7L731.6,381.5L771.3,414.4L786.1,434.6L780.2,466.1L714.2,475L710.8,468.8L709.5,439.9Z","cx":737.13,"cy":427.34,"bounds":[[689.2098869597479,373.6794238285851],[786.0886923878415,474.9829125161598]]},{"id":"HI","name":"Hawaii","capital":"Honolulu","region":"West","d":"M305.4,584.5L309.3,572.6L332.2,589.4L309.2,600.4ZM291.6,557.9L291.6,557.9L291.6,557.9ZM291.6,566.7L291.6,566.7L291.6,566.7ZM283.9,558.3L283.9,558.3L283.9,558.3ZM278.6,553.8L278.6,553.8L278.6,553.8ZM258,543L258,543L258,543ZM226.1,532.6L226.1,532.6L226.1,532.6ZM216.3,536.6L216.3,536.6L216.3,536.6Z","cx":315.63,"cy":587.23,"bounds":[[216.28909278264905,532.6108527294662],[332.22761227376594,600.4023301780162]]},{"id":"ID","name":"Idaho","capital":"Boise","region":"West","d":"M170.5,102.4L183.6,35.9L198.1,39.1L195.6,74.8L213.3,97.1L224.8,149.1L256,153.9L247.2,209.6L197.8,201.1L148.8,190.7L157.3,139.1L175.6,112.6Z","cx":198.62,"cy":145.85,"bounds":[[148.84701287277824,35.912384792261946],[256.041407261606,209.5589085553246]]},{"id":"IL","name":"Illinois","capital":"Springfield","region":"Midwest","d":"M576.5,264.7L581.6,240.7L593.3,236L587,215.4L634.2,212.4L640.3,229.8L646.9,297.4L639.4,319.7L621.2,339.9L597.6,313.2L600.9,298.4L578,279.4Z","cx":614.94,"cy":269.31,"bounds":[[576.4946413110665,212.39732222718408],[646.8898696590386,339.9316400776145]]},{"id":"IN","name":"Indiana","capital":"Indianapolis","region":"Midwest","d":"M640.3,229.8L651.9,227.5L685.8,225.4L692.5,284.3L676,311L639.4,319.7L646.9,297.4Z","cx":665.47,"cy":269.1,"bounds":[[639.3621039472295,225.37863525739294],[692.5286301701078,319.7373274501184]]},{"id":"IA","name":"Iowa","capital":"Des Moines","region":"Midwest","d":"M490.6,195.2L576.3,193.3L587,215.4L593.3,236L581.6,240.7L576.5,264.7L570.9,259.6L502,261.9L490.6,218.3Z","cx":539.32,"cy":226.67,"bounds":[[490.59127619103396,193.29250843398086],[593.2654278029277,264.70435902174665]]},{"id":"KS","name":"Kansas","capital":"Topeka","region":"Midwest","d":"M393.8,271.9L509.9,275.2L522.3,295.2L522.8,343.8L389.7,340.7Z","cx":456.15,"cy":308.56,"bounds":[[389.6495657623399,271.8725423939409],[522.7971706807609,343.83096998177746]]},{"id":"KY","name":"Kentucky","capital":"Frankfort","region":"South","d":"M621.2,339.9L639.4,319.7L676,311L692.5,284.3L733.2,294.8L747.1,313.2L719.8,338.7L644.8,346.1L616.8,351.3ZM615.6,351.5L614.6,351.5L615.6,351.5Z","cx":688.21,"cy":320.68,"bounds":[[614.6368915305995,284.29859230568604],[747.1358295889032,351.5194057122377]]},{"id":"LA","name":"Louisiana","capital":"Baton Rouge","region":"South","d":"M637.6,497.4L637.6,497.4L637.6,497.4ZM628.5,497.9L628.5,497.9L628.5,497.9ZM623.7,510.2L623.7,510.2L623.7,510.2ZM609.5,520.8L609.5,520.8L609.5,520.8ZM605.9,521.3L605.9,521.3L605.9,521.3ZM602.2,522.4L602.2,522.4L602.2,522.4ZM576.6,511.5L576.6,511.5L576.6,511.5ZM535,434.7L589.4,433.1L595,448L582.6,479.2L619.1,477.1L624.7,495.4L626.3,513.4L601,522.8L578.9,505.8L540.6,510.4L545.8,476.3Z","cx":577.17,"cy":477.85,"bounds":[[535.0423717399334,433.0817150061446],[637.5506836124808,522.753300234481]]},{"id":"ME","name":"Maine","capital":"Augusta","region":"Northeast","d":"M939.8,114.8L939.8,114.8L939.8,114.8ZM938,116.1L938,116.1L938,116.1ZM936.3,112.2L936.3,112.2L936.3,112.2ZM932.2,116L932.2,116L932.2,116ZM933.5,124.7L933.5,124.7L933.5,124.7ZM931.3,119.2L931.3,119.2L931.3,119.2ZM930.1,116.3L930.1,116.3L930.1,116.3ZM910.2,150.1L890.9,102.4L900,86.1L905.9,47.6L929.7,49.7L938.7,79.9L957.1,94.8L912.9,138.1Z","cx":919.3,"cy":93.42,"bounds":[[890.8758548641974,47.61423113545584],[957.067253490669,150.13904267059843]]},{"id":"MD","name":"Maryland","capital":"Annapolis","region":"South","d":"M849.8,285L849,285.2L849.8,285ZM847.3,281.5L847.3,281.5L847.3,281.5ZM839,268.1L839,268.1L839,268.1ZM782.3,256.9L844.8,244.6L852.6,272.5L863.7,270.3L862.5,280.5L855.5,283.8L827.1,273.7L827.9,269.9L825.9,267L813.9,260.3L804.4,253.4L784.1,268.5Z","cx":831.34,"cy":262.75,"bounds":[[782.2900829187399,244.61125995629948],[863.6813765000365,285.16605946552806]]},{"id":"MA","name":"Massachusetts","capital":"Boston","region":"Northeast","d":"M927.7,186.8L927.7,186.8L927.7,186.8ZM918.3,188.3L918.3,188.3L918.3,188.3ZM871,167.6L884.1,164.8L909.5,154.8L920.3,176.8L912.8,186.4L910.5,182.8L909.8,182.1L898.8,178L871.2,184Z","cx":896.14,"cy":171.41,"bounds":[[871.0247579885661,154.76003711379815],[927.6546742776447,188.31289515891422]]},{"id":"MI","name":"Michigan","capital":"Lansing","region":"Midwest","d":"M677.1,130.9L677.1,130.9L677.1,130.9ZM665.6,134.1L665.6,134.1L665.6,134.1ZM663.5,133.2L663.5,133.2L663.5,133.2ZM662.4,138.6L662.4,138.6L662.4,138.6ZM660.9,135.6L660.9,135.6L660.9,135.6ZM658.7,142.5L658.7,142.5L658.7,142.5ZM656.6,149.7L656.6,149.7L656.6,149.7ZM655.4,152.7L655.4,152.7L655.4,152.7ZM645.6,139.9L645.6,139.9L645.6,139.9ZM651.9,227.5L659.8,211.1L652.4,184L654.6,160.1L675.4,132.7L696.7,139.9L702.4,162.5L721.3,190.5L708.3,221.7L685.8,225.4ZM601.4,92.4L601.4,92.4L601.4,92.4ZM585.3,123.1L618.6,100.5L632.7,120.5L670,111L694.1,127.6L639.9,135.4L632.4,153L627.8,147.8L627.8,147.8L622.7,135L586.4,123.6L586.4,123.6Z","cx":669.02,"cy":166.44,"bounds":[[585.349455138044,92.38967602080402],[721.278375097452,227.54050331680196]]},{"id":"MN","name":"Minnesota","capital":"Saint Paul","region":"Midwest","d":"M479.5,70.7L510.8,70.8L531.5,81.3L596.2,90.1L560.3,121.2L547.5,147.2L549.4,165.5L576.3,193.3L490.6,195.2L489.1,139.9Z","cx":524.99,"cy":131.37,"bounds":[[479.50045956011826,70.6829460277936],[596.233882755315,195.24606227076572]]},{"id":"MS","name":"Mississippi","capital":"Jackson","region":"South","d":"M644.5,493.1L644.5,493.1L644.5,493.1ZM639.3,492.9L639.3,492.9L639.3,492.9ZM635.2,493.9L635.2,493.9L635.2,493.9ZM631.8,493.6L631.8,493.6L631.8,493.6ZM589.4,433.1L589.7,411.2L602.8,386.7L641.6,384L642.2,455L646.5,489.5L624.7,495.4L619.1,477.1L582.6,479.2L595,448Z","cx":618.01,"cy":437.37,"bounds":[[582.5923681709439,383.99141232933766],[646.4528447814471,495.4165440971059]]},{"id":"MO","name":"Missouri","capital":"Jefferson City","region":"Midwest","d":"M502,261.9L570.9,259.6L576.5,264.7L578,279.4L600.9,298.4L597.6,313.2L621.2,339.9L616.8,351.3L615.6,351.5L614.6,351.5L611.9,363.1L603.6,352.2L523,355.3L522.8,343.8L522.3,295.2L509.9,275.2Z","cx":559.87,"cy":310.67,"bounds":[[502.045660211056,259.57129317036913],[621.2101771406095,363.1205216657934]]},{"id":"MT","name":"Montana","capital":"Helena","region":"West","d":"M198.1,39.1L376.9,65.7L371.1,134.3L369,155.7L257.8,142L256,153.9L224.8,149.1L213.3,97.1L195.6,74.8Z","cx":287.96,"cy":98.52,"bounds":[[195.6114829307989,39.05324590008104],[376.85592987035034,155.71397837758047]]},{"id":"NE","name":"Nebraska","capital":"Lincoln","region":"Midwest","d":"M365.3,201L456.8,206.2L490.6,218.3L502,261.9L509.9,275.2L393.8,271.9L395.3,249.1L361.4,246.6Z","cx":433.4,"cy":238.43,"bounds":[[361.4418372913616,201.02132927513594],[509.92982428786723,275.20662942593754]]},{"id":"NV","name":"Nevada","capital":"Carson City","region":"West","d":"M100.4,179.2L100.5,179.2L148.8,190.7L197.8,201.1L176,313.3L159.5,331.3L156.8,356.2L83.3,245.5Z","cx":141.83,"cy":250.84,"bounds":[[83.32567967516445,179.1535639300149],[197.75940341654632,356.1945279294696]]},{"id":"NH","name":"New Hampshire","capital":"Concord","region":"Northeast","d":"M886.1,110.5L890.9,102.4L910.2,150.1L909.5,154.8L884.1,164.8L880.6,145.8Z","cx":893.21,"cy":138.67,"bounds":[[880.5702523385678,102.39187611330613],[910.1823213868174,164.84733114164942]]},{"id":"NJ","name":"New Jersey","capital":"Trenton","region":"Northeast","d":"M849.2,245.8L849.7,244.4L850.7,241.5L855,204L869.2,216.4L868.9,217.1L866.6,221.4L873.2,237.3L862.9,253.8L849.3,246.4Z","cx":860.52,"cy":231.23,"bounds":[[849.1627857453598,204.01189980672984],[873.1970192449755,253.82830665558345]]},{"id":"NM","name":"New Mexico","capital":"Santa Fe","region":"West","d":"M264.6,328L372.5,339.3L371.6,350.8L362.9,453.3L295.1,447L296.3,452.1L264.2,448.2L246.9,456.3Z","cx":311.06,"cy":392.55,"bounds":[[246.8544237407238,327.9699939953201],[372.50262499428885,456.25881106915585]]},{"id":"NY","name":"New York","capital":"Albany","region":"Northeast","d":"M899.2,195.7L899.2,195.7L899.2,195.7ZM898.4,199.6L898.4,199.6L898.4,199.6ZM896.7,198L896.7,198L896.7,198ZM868.9,217.1L866.6,221.4L868.9,217.1ZM815.5,153.8L815.5,153.8L815.5,153.8ZM814.1,153.7L814.1,153.7L814.1,153.7ZM767.5,200.3L774.9,176L809,169.2L814.9,146.4L834.4,123.2L857.6,117.8L871,167.6L871.2,184L874,208.3L869.2,216.4L855,204L840.9,192.1L768.6,206.4Z","cx":831.41,"cy":170.6,"bounds":[[767.486366828867,117.8122260512439],[899.2421600352804,221.43064742730246]]},{"id":"NC","name":"North Carolina","capital":"Raleigh","region":"South","d":"M864.3,329.1L864.3,329.1L864.3,329.1ZM863.3,349.7L863.3,349.7L863.3,349.7ZM755.5,334L858.8,315.9L847.4,332.7L865.1,337.3L822.8,386.1L798.2,368.4L772,364.8L734.9,373.7L712.7,376.8Z","cx":798.97,"cy":349.7,"bounds":[[712.7228371190126,315.92126485051494],[865.1144037102181,386.1389717945765]]},{"id":"ND","name":"North Dakota","capital":"Bismarck","region":"Midwest","d":"M376.9,65.7L479.5,70.7L489.1,139.9L371.1,134.3Z","cx":429.14,"cy":103.44,"bounds":[[371.08785507452046,65.68853844773685],[489.0975783193086,139.8729923241899]]},{"id":"OH","name":"Ohio","capital":"Columbus","region":"Midwest","d":"M720.6,223L720.6,223L720.6,223ZM718.7,222.3L718.7,222.3L718.7,222.3ZM685.8,225.4L708.3,221.7L725.6,227.4L756.1,208.9L761.1,239.2L759.2,260.9L733.2,294.8L692.5,284.3Z","cx":723.98,"cy":252.93,"bounds":[[685.8092480208237,208.94583999387783],[761.0799904842094,294.78450590198463]]},{"id":"OK","name":"Oklahoma","capital":"Oklahoma City","region":"South","d":"M372.5,339.3L389.7,340.7L522.8,343.8L523,355.3L526.4,420.7L512.4,413.5L476.2,418.7L423.9,398.3L425.8,353.9L371.6,350.8Z","cx":470,"cy":375.5,"bounds":[[371.5951363270162,339.3468703094462],[526.4048870586156,420.69743434198756]]},{"id":"OR","name":"Oregon","capital":"Salem","region":"West","d":"M70.9,70.2L85.9,91.5L138.7,94.8L170.5,102.4L175.6,112.6L157.3,139.1L148.8,190.7L100.5,179.2L100.4,179.2L100.5,179.2L32.6,159.9L65,70.6Z","cx":103.54,"cy":133.72,"bounds":[[32.573452575343424,70.22913393800695],[175.5901999940907,190.71504479825103]]},{"id":"PA","name":"Pennsylvania","capital":"Harrisburg","region":"Northeast","d":"M756.1,208.9L767.5,200.3L768.6,206.4L840.9,192.1L855,204L850.7,241.5L844.8,244.6L782.3,256.9L764.5,259.9L761.1,239.2Z","cx":805.56,"cy":225.23,"bounds":[[756.113589300816,192.14219287558933],[854.989616309899,259.896268854407]]},{"id":"RI","name":"Rhode Island","capital":"Providence","region":"Northeast","d":"M910.5,182.8L912.8,186.4L910.5,182.8ZM907.9,183.8L907.9,183.8L907.9,183.8ZM908.4,188.4L908.4,188.4L908.4,188.4ZM906.7,196L906.7,196L906.7,196ZM901.8,193.5L898.8,178L909.8,182.1Z","cx":903.46,"cy":184.55,"bounds":[[898.7890481604147,178.02057236102235],[912.787259427419,195.98130449181292]]},{"id":"SC","name":"South Carolina","capital":"Columbia","region":"South","d":"M734.9,373.7L772,364.8L798.2,368.4L822.8,386.1L786.1,434.6L771.3,414.4L731.6,381.5Z","cx":779.42,"cy":391.62,"bounds":[[731.6327433194374,364.75843948677186],[822.7839188180023,434.58294203657306]]},{"id":"SD","name":"South Dakota","capital":"Pierre","region":"Midwest","d":"M369,155.7L371.1,134.3L489.1,139.9L490.6,195.2L490.6,218.3L456.8,206.2L365.3,201Z","cx":430.23,"cy":171.98,"bounds":[[365.3086744942991,134.31000437456998],[490.60070086593987,218.27652811756707]]},{"id":"TN","name":"Tennessee","capital":"Nashville","region":"South","d":"M611.9,363.1L614.6,351.5L615.6,351.5L616.8,351.3L644.8,346.1L719.8,338.7L755.5,334L712.7,376.8L689.2,379.7L641.6,384L602.8,386.7Z","cx":672.95,"cy":361.42,"bounds":[[602.846165398731,333.97736965463275],[755.523250053244,386.74454656618013]]},{"id":"TX","name":"Texas","capital":"Austin","region":"South","d":"M371.6,350.8L425.8,353.9L423.9,398.3L476.2,418.7L512.4,413.5L526.4,420.7L534.7,422.5L534.7,422.5L535,434.7L545.8,476.3L540.6,510.4L489.2,541.4L469.4,564.3L469.7,597.6L434.3,583.4L427.6,559.4L390.3,505.7L367.3,505.3L356.8,521.6L330.5,504.5L323,479.9L296.3,452.1L295.1,447L362.9,453.3Z","cx":435.17,"cy":469.46,"bounds":[[295.10889956155233,350.76411267366586],[545.7614348866997,597.634029145843]]},{"id":"UT","name":"Utah","capital":"Salt Lake City","region":"West","d":"M197.8,201.1L247.2,209.6L243.5,232.2L277.1,237.2L264.6,328L176,313.3Z","cx":226.79,"cy":268.52,"bounds":[[176.00039516278065,201.0723857954116],[277.12251274825434,327.9699939953201]]},{"id":"VT","name":"Vermont","capital":"Montpelier","region":"Northeast","d":"M857.6,117.8L886.1,110.5L880.6,145.8L884.1,164.8L871,167.6Z","cx":873.31,"cy":136.54,"bounds":[[857.5701022558226,110.51276796461116],[886.1492188695476,167.63912306316843]]},{"id":"VA","name":"Virginia","capital":"Richmond","region":"South","d":"M850.3,287.3L850.3,287.3L850.3,287.3ZM855.5,283.8L862.5,280.5L855.5,283.8ZM849.8,285L849,285.2L849.8,285ZM747.1,313.2L776.6,309.3L783.7,286.6L813.9,260.3L825.9,267L827.9,269.9L827.1,273.7L846,287.3L858.8,315.9L755.5,334L719.8,338.7Z","cx":801.08,"cy":304.67,"bounds":[[719.7619660960481,260.325146391624],[862.5210665823017,338.7256783202844]]},{"id":"WA","name":"Washington","capital":"Olympia","region":"West","d":"M93.2,50.9L93.2,50.9L93.2,50.9ZM98.8,24.6L98.8,24.6L98.8,24.6ZM98.9,20.3L98.9,20.3L98.9,20.3ZM97.7,23.5L97.7,23.5L97.7,23.5ZM95,31L95,31L95,31ZM95.5,17.9L95.5,17.9L95.5,17.9ZM93.6,19.6L93.6,19.6L93.6,19.6ZM95.2,13L95.2,13L95.2,13ZM91,21.2L91,21.2L91,21.2ZM91.1,19.1L91.1,19.1L91.1,19.1ZM183.6,35.9L170.5,102.4L138.7,94.8L85.9,91.5L70.9,70.2L63,67.7L68.6,19.3L101.7,37.6L100,14.4Z","cx":123.88,"cy":58.64,"bounds":[[62.986937752734434,12.97051740787856],[183.61003558175457,102.35439541956771]]},{"id":"WV","name":"West Virginia","capital":"Charleston","region":"South","d":"M733.2,294.8L759.2,260.9L761.1,239.2L764.5,259.9L782.3,256.9L784.1,268.5L804.4,253.4L813.9,260.3L783.7,286.6L776.6,309.3L747.1,313.2Z","cx":768.17,"cy":282.8,"bounds":[[733.211131239284,239.16969970403886],[813.8789415250437,313.24672805065495]]},{"id":"WI","name":"Wisconsin","capital":"Madison","region":"Midwest","d":"M641.9,146.3L641.9,146.3L641.9,146.3ZM635.6,150.4L635.6,150.4L635.6,150.4ZM584,113.3L584,113.3L584,113.3ZM583.3,116.2L583.3,116.2L583.3,116.2ZM581.2,115.2L581.2,115.2L581.2,115.2ZM579.6,117.2L579.6,117.2L579.6,117.2ZM579.8,114.4L579.8,114.4L579.8,114.4ZM579.2,113L579.2,113L579.2,113ZM579.2,118.4L579.2,118.4L579.2,118.4ZM576,114.1L576,114.1L576,114.1ZM560.3,121.2L585.3,123.1L586.4,123.6L586.4,123.6L622.7,135L627.8,147.8L627.8,147.8L632.4,153L634.2,212.4L587,215.4L576.3,193.3L549.4,165.5L547.5,147.2Z","cx":594.26,"cy":167.04,"bounds":[[547.479235912807,113.0450250273052],[641.9462707227242,215.373160983066]]},{"id":"WY","name":"Wyoming","capital":"Cheyenne","region":"West","d":"M369,155.7L365.3,201L361.4,246.6L277.1,237.2L243.5,232.2L247.2,209.6L256,153.9L257.8,142Z","cx":307.86,"cy":194.79,"bounds":[[243.53200288262832,142.0435560688676],[369.04090457028786,246.55440430181056]]}]</script>
+
+<!--
+  ============================================================
+  FIREBASE SETUP — REQUIRED FOR THE LEADERBOARD TO WORK
+  ============================================================
+  1. Go to https://console.firebase.google.com, create a free project,
+     add a Web App, and enable Firestore (see the setup guide you were given).
+  2. Copy the `firebaseConfig` object Firebase shows you and paste it
+     below, replacing the placeholder values.
+  3. That's it — no other code changes needed.
+  Until you do this, the app works fully offline with local high scores;
+  the leaderboard screen will just show a "not connected" message.
+  ============================================================
+-->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc,
+    collection, query, where, orderBy, limit, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  let db = null;
+  let ready = false;
+  try {
+    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      ready = true;
+    }
+  } catch (e) {
+    console.warn('Firebase failed to initialize:', e.message);
+  }
+
+  function makeDocId(username, mode, region) {
+    return (username.trim().toLowerCase() + '__' + mode + '__' + region)
+      .replace(/[^a-z0-9_]/g, '-');
+  }
+
+  async function submitScore(username, mode, region, data) {
+    if (!ready) return { ok: false, reason: 'not-configured' };
+    try {
+      const id = makeDocId(username, mode, region);
+      const ref = doc(db, 'scores', id);
+      const existing = await getDoc(ref);
+      const candidate = {
+        username: username.trim(),
+        mode, region,
+        correct: data.correct,
+        total: data.total,
+        accuracy: data.accuracy,
+        seconds: data.seconds,
+        updatedAt: Date.now()
+      };
+      let isNewRecord = true;
+      if (existing.exists()) {
+        const prev = existing.data();
+        isNewRecord = candidate.accuracy > prev.accuracy ||
+          (candidate.accuracy === prev.accuracy && candidate.seconds < prev.seconds);
+      }
+      if (isNewRecord) await setDoc(ref, candidate);
+      return { ok: true, isNewRecord };
+    } catch (e) {
+      console.warn('submitScore failed:', e.message);
+      return { ok: false, reason: 'error', message: e.message };
+    }
+  }
+
+  async function fetchLeaderboard(mode, region, max) {
+    if (!ready) return { ok: false, reason: 'not-configured', rows: [] };
+    try {
+      const q = query(
+        collection(db, 'scores'),
+        where('mode', '==', mode),
+        where('region', '==', region),
+        orderBy('accuracy', 'desc'),
+        orderBy('seconds', 'asc'),
+        limit(max || 50)
+      );
+      const snap = await getDocs(q);
+      const rows = [];
+      snap.forEach(d => rows.push(d.data()));
+      return { ok: true, rows };
+    } catch (e) {
+      console.warn('fetchLeaderboard failed:', e.message);
+      return { ok: false, reason: 'error', message: e.message, rows: [] };
+    }
+  }
+
+  window.AtlasLB = { ready, submitScore, fetchLeaderboard };
+</script>
+
 <script>
 (function(){
   "use strict";
   const RAW = JSON.parse(document.getElementById('states-data').textContent);
   const STATES = RAW.filter(s => s.id !== 'DC');
   const VIEWBOX = "0 0 975 610";
+
+  // ---------------- Username ----------------
+  const USERNAME_KEY = 'atlasUsername';
+  function getUsername(){
+    try { return localStorage.getItem(USERNAME_KEY) || ''; } catch(e){ return ''; }
+  }
+  function setUsername(name){
+    try { localStorage.setItem(USERNAME_KEY, name); } catch(e){ /* ignore */ }
+    document.getElementById('usernameLabel').textContent = name || 'Guest';
+  }
+  function openUsernameModal(){
+    document.getElementById('usernameInput').value = getUsername();
+    document.getElementById('usernameModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('usernameInput').focus(), 50);
+  }
+  function closeUsernameModal(){
+    document.getElementById('usernameModal').style.display = 'none';
+  }
+  function saveUsername(){
+    const val = document.getElementById('usernameInput').value.trim().slice(0, 20);
+    if(!val) return;
+    setUsername(val);
+    closeUsernameModal();
+    renderHighScoreLine();
+  }
+  document.getElementById('usernameBtn').addEventListener('click', openUsernameModal);
+  document.getElementById('usernameCancelBtn').addEventListener('click', closeUsernameModal);
+  document.getElementById('usernameSaveBtn').addEventListener('click', saveUsername);
+  document.getElementById('usernameInput').addEventListener('keydown', e => {
+    if(e.key === 'Enter') saveUsername();
+  });
+  setUsername(getUsername());
+  if(!getUsername()) setTimeout(openUsernameModal, 400);
 
   function norm(s){
     return s.toLowerCase().trim().replace(/[^a-z ]/g,'').replace(/\s+/g,' ');
@@ -1006,6 +1319,61 @@ button, input{ font-family: inherit; }
     showScreen('screen-start');
   }
 
+  // ---------------- Leaderboard ----------------
+  const MODE_LABELS = { locate: 'Locate it', name: 'Name it', flags: 'Flags' };
+  const REGION_LABELS = { all: 'All 50 states', Northeast: 'Northeast', Midwest: 'Midwest', South: 'South', West: 'West' };
+
+  async function openLeaderboard(mode, region){
+    document.getElementById('lbTitle').textContent = MODE_LABELS[mode] || mode;
+    document.getElementById('lbSubtitle').textContent = REGION_LABELS[region] || region;
+    showScreen('screen-leaderboard');
+    const list = document.getElementById('lbList');
+
+    if(mode === 'learn'){
+      document.getElementById('lbTitle').textContent = 'Learn mode';
+      document.getElementById('lbSubtitle').textContent = 'Exploring isn\'t scored';
+      list.innerHTML = '<div class="lb-empty">Learn mode has no scores to rank — switch to Locate it, Name it, or Flags to compete.</div>';
+      return;
+    }
+
+    list.innerHTML = '<div class="lb-empty">Loading…</div>';
+    if(!window.AtlasLB){
+      list.innerHTML = '<div class="lb-empty">Leaderboard is still loading. Try again in a moment.</div>';
+      return;
+    }
+    const res = await window.AtlasLB.fetchLeaderboard(mode, region, 50);
+    if(!res.ok){
+      list.innerHTML = res.reason === 'not-configured'
+        ? '<div class="lb-empty">Leaderboard isn\'t connected yet — add your Firebase config to the HTML file to turn this on.</div>'
+        : '<div class="lb-empty">Couldn\'t load the leaderboard right now. Check your connection and try again.</div>';
+      return;
+    }
+    if(res.rows.length === 0){
+      list.innerHTML = '<div class="lb-empty">No scores yet for this mode — be the first!</div>';
+      return;
+    }
+    const me = getUsername().trim().toLowerCase();
+    list.innerHTML = res.rows.map((row, i) => {
+      const isMe = row.username.trim().toLowerCase() === me;
+      return '<div class="lb-row' + (isMe ? ' me' : '') + '">' +
+        '<span class="lb-rank">' + (i+1) + '</span>' +
+        '<span class="lb-name">' + escapeHtml(row.username) + '</span>' +
+        '<span><span class="lb-score">' + row.correct + '/' + row.total + '</span>' +
+        '<span class="lb-time">' + fmtTime(row.seconds) + '</span></span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  document.getElementById('leaderboardBtn').addEventListener('click', () => {
+    openLeaderboard(selectedMode, selectedRegion);
+  });
+
   // ---------------- Dynamic Island toast ----------------
   let islandTimer = null;
   function showIsland(text, kind){
@@ -1057,6 +1425,8 @@ button, input{ font-family: inherit; }
     const isLearn = game.mode === 'learn';
     const isFlags = game.mode === 'flags';
     document.getElementById('mapPanel').classList.toggle('mode-name', game.mode === 'name' || isLearn);
+    document.getElementById('mapPanel').classList.toggle('learn-active', isLearn);
+    document.querySelector('.prompt-card').style.display = isLearn ? 'none' : 'flex';
     document.getElementById('nameInputRow').style.display = game.mode === 'name' ? 'flex' : 'none';
     document.getElementById('flagDisplay').style.display = isFlags ? 'flex' : 'none';
     document.getElementById('hintBtn').style.display = isLearn ? 'none' : 'flex';
@@ -1067,6 +1437,12 @@ button, input{ font-family: inherit; }
     document.getElementById('quitBtn').textContent = isLearn ? 'Done' : 'End';
     document.getElementById('promptLabel').textContent =
       game.mode === 'name' ? 'Name it' : game.mode === 'flags' ? 'Flags' : isLearn ? 'Learn' : 'Locate it';
+
+    document.getElementById('learnFloatCard').style.display = isLearn ? 'block' : 'none';
+    if(isLearn){
+      document.getElementById('learnFloatTitle').textContent = 'Tap a state to begin';
+      document.getElementById('learnFloatSub').textContent = '';
+    }
 
     const mount = document.getElementById('mapMount');
     const svg = buildSVG(mount, shuffled, {drawIn:true});
@@ -1084,10 +1460,7 @@ button, input{ font-family: inherit; }
 
     showScreen('screen-quiz');
 
-    if(isLearn){
-      document.getElementById('promptText').textContent = 'Tap a state to begin';
-      document.getElementById('promptSub').textContent = '';
-    } else {
+    if(!isLearn){
       updateHud();
       startTimer();
       nextQuestion();
@@ -1107,8 +1480,8 @@ button, input{ font-family: inherit; }
     target.classList.add('visited-current');
     game.currentLearnPath = target;
 
-    document.getElementById('promptText').textContent = state.name;
-    document.getElementById('promptSub').textContent = 'Capital: ' + state.capital;
+    document.getElementById('learnFloatTitle').textContent = state.name;
+    document.getElementById('learnFloatSub').textContent = 'Capital: ' + state.capital;
     ping(game.svg, state.cx, state.cy, 'var(--tint)');
     haptic();
   }
@@ -1305,6 +1678,12 @@ button, input{ font-family: inherit; }
       isNewRecord = recordHighScore(game.mode, game.region, {
         correct: game.score, total: game.total, accuracy, seconds: totalSecs, date: Date.now()
       });
+      const username = getUsername();
+      if(username && window.AtlasLB){
+        window.AtlasLB.submitScore(username, game.mode, game.region, {
+          correct: game.score, total: game.total, accuracy, seconds: totalSecs
+        }).catch(() => {});
+      }
     }
 
     document.getElementById('missedTitle').textContent = 'Missed states';
@@ -1377,6 +1756,9 @@ button, input{ font-family: inherit; }
   });
   document.getElementById('replayBtn').addEventListener('click', startGame);
   document.getElementById('menuBtn').addEventListener('click', () => showScreen('screen-start'));
+  document.getElementById('endLeaderboardBtn').addEventListener('click', () => {
+    if(game) openLeaderboard(game.mode, game.region);
+  });
 
   renderHighScoreLine();
 
