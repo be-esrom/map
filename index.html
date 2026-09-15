@@ -1373,9 +1373,18 @@ button, input{ font-family: inherit; }
     }
     const res = await window.AtlasLB.fetchLeaderboard(mode, region, 50);
     if(!res.ok){
-      list.innerHTML = res.reason === 'not-configured'
-        ? '<div class="lb-empty">Leaderboard isn\'t connected yet — add your Firebase config to the HTML file to turn this on.</div>'
-        : '<div class="lb-empty">Couldn\'t load the leaderboard right now. Check your connection and try again.</div>';
+      if(res.reason === 'not-configured'){
+        list.innerHTML = '<div class="lb-empty">Leaderboard isn\'t connected yet — add your Firebase config to the HTML file to turn this on.</div>';
+      } else {
+        const rawMsg = res.message || 'Unknown error.';
+        const linked = escapeHtml(rawMsg).replace(
+          /(https?:\/\/[^\s)]+)/g,
+          '<a href="$1" target="_blank" rel="noopener" style="color:var(--tint);word-break:break-all;">$1</a>'
+        );
+        list.innerHTML = '<div class="lb-empty">Couldn\'t load the leaderboard.<br><br>' +
+          '<span style="font-size:12px; opacity:0.8;">' + linked + '</span>' +
+          '<br><br>If this mentions a missing index, click the link above, wait about a minute, then reopen this screen.</div>';
+      }
       return;
     }
     if(res.rows.length === 0){
