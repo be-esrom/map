@@ -4,12 +4,13 @@ service cloud.firestore {
     match /scores/{docId} {
       allow read: if true;
       allow create, update: if
-        request.resource.data.keys().hasAll(['username','mode','region','correct','total','accuracy','seconds'])
+        request.resource.data.keys().hasAll(['username','mode','region','country','correct','total','accuracy','seconds'])
         && request.resource.data.username is string
         && request.resource.data.username.size() > 0
         && request.resource.data.username.size() <= 20
         && request.resource.data.mode in ['locate','name','flags']
-        && request.resource.data.region in ['all','Northeast','Midwest','South','West']
+        && request.resource.data.country in ['us','ca']
+        && request.resource.data.region in ['all','Northeast','Midwest','South','West','Prairies','Central','Atlantic','North']
         && request.resource.data.correct is int
         && request.resource.data.total is int
         && request.resource.data.correct <= request.resource.data.total
