@@ -1,4 +1,4 @@
-const CACHE_NAME = 'states-quiz-v1';
+const CACHE_NAME = 'states-quiz-v2';
 const SHELL_FILES = [
   './',
   './index.html',

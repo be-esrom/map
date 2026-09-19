@@ -436,7 +436,8 @@ button, input{ font-family: inherit; }
   .map-card path:hover{ filter: brightness(1.22); }
 }
 .map-card path:active{ transform: scale(0.985); }
-.map-card path:focus-visible{
+.map-card path:focus{ outline: none; }
+body.kbd-nav .map-card path:focus{
   outline: 3px solid var(--tint);
   outline-offset: -1px;
   filter: brightness(1.3);
@@ -535,6 +536,21 @@ button, input{ font-family: inherit; }
 .learn-float-card p{
   font-size: 14px; color: var(--label-secondary); margin: 4px 0 0;
 }
+.lfc-facts{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--separator-soft);
+}
+.lfc-fact-wide{ grid-column: 1 / -1; }
+.lfc-fact{ display:flex; flex-direction:column; gap:2px; }
+.lfc-fact-label{
+  font-size: 11px; font-weight:600; color: var(--label-secondary);
+  text-transform:uppercase; letter-spacing:0.03em;
+}
+.lfc-fact span:last-child{ font-size: 14px; font-weight:600; color: var(--label); }
 
 .map-toolbar{
   display:flex; align-items:center; justify-content:center;
@@ -839,6 +855,11 @@ button, input{ font-family: inherit; }
         <span class="lfc-eyebrow">LEARN</span>
         <h3 id="learnFloatTitle">Tap a state to begin</h3>
         <p id="learnFloatSub"></p>
+        <div class="lfc-facts" id="learnFloatFacts" style="display:none;">
+          <div class="lfc-fact"><span class="lfc-fact-label">Nickname</span><span id="learnFactNickname">—</span></div>
+          <div class="lfc-fact"><span class="lfc-fact-label" id="learnFactYearLabel">Admitted</span><span id="learnFactYear">—</span></div>
+          <div class="lfc-fact lfc-fact-wide"><span class="lfc-fact-label">Borders</span><span id="learnFactBorders">—</span></div>
+        </div>
       </div>
 
       <div class="card hud-card">
@@ -1033,6 +1054,14 @@ button, input{ font-family: inherit; }
   const RAW_US = JSON.parse(document.getElementById('states-data').textContent).filter(s => s.id !== 'DC');
   const RAW_CA = JSON.parse(document.getElementById('canada-data').textContent);
 
+  // Only show the accessibility focus ring for actual keyboard navigation (Tab),
+  // never for mouse/touch clicks — browser :focus-visible heuristics on SVG are unreliable.
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Tab') document.body.classList.add('kbd-nav');
+  });
+  document.addEventListener('mousedown', () => document.body.classList.remove('kbd-nav'));
+  document.addEventListener('touchstart', () => document.body.classList.remove('kbd-nav'), {passive:true});
+
   const COUNTRIES = {
     us: {
       label: 'United States',
@@ -1064,6 +1093,75 @@ button, input{ font-family: inherit; }
       ]
     }
   };
+
+const US_FACTS = {
+  AL:{nickname:"Yellowhammer State",admitted:1819,borders:["TN","GA","FL","MS"]},
+  AK:{nickname:"The Last Frontier",admitted:1959,borders:[]},
+  AZ:{nickname:"Grand Canyon State",admitted:1912,borders:["CA","NV","UT","NM"]},
+  AR:{nickname:"Natural State",admitted:1836,borders:["MO","TN","MS","LA","TX","OK"]},
+  CA:{nickname:"Golden State",admitted:1850,borders:["OR","NV","AZ"]},
+  CO:{nickname:"Centennial State",admitted:1876,borders:["WY","NE","KS","OK","NM","UT"]},
+  CT:{nickname:"Constitution State",admitted:1788,borders:["NY","MA","RI"]},
+  DE:{nickname:"First State",admitted:1787,borders:["MD","PA","NJ"]},
+  FL:{nickname:"Sunshine State",admitted:1845,borders:["GA","AL"]},
+  GA:{nickname:"Peach State",admitted:1788,borders:["FL","AL","TN","NC","SC"]},
+  HI:{nickname:"Aloha State",admitted:1959,borders:[]},
+  ID:{nickname:"Gem State",admitted:1890,borders:["MT","WY","UT","NV","OR","WA"]},
+  IL:{nickname:"Prairie State",admitted:1818,borders:["WI","IN","KY","MO","IA"]},
+  IN:{nickname:"Hoosier State",admitted:1816,borders:["MI","OH","KY","IL"]},
+  IA:{nickname:"Hawkeye State",admitted:1846,borders:["MN","WI","IL","MO","NE","SD"]},
+  KS:{nickname:"Sunflower State",admitted:1861,borders:["NE","MO","OK","CO"]},
+  KY:{nickname:"Bluegrass State",admitted:1792,borders:["IN","OH","WV","VA","TN","MO","IL"]},
+  LA:{nickname:"Pelican State",admitted:1812,borders:["TX","AR","MS"]},
+  ME:{nickname:"Pine Tree State",admitted:1820,borders:["NH"]},
+  MD:{nickname:"Old Line State",admitted:1788,borders:["VA","WV","PA","DE"]},
+  MA:{nickname:"Bay State",admitted:1788,borders:["NY","VT","NH","RI","CT"]},
+  MI:{nickname:"Great Lakes State",admitted:1837,borders:["OH","IN","WI"]},
+  MN:{nickname:"North Star State",admitted:1858,borders:["WI","IA","SD","ND"]},
+  MS:{nickname:"Magnolia State",admitted:1817,borders:["TN","AL","LA","AR"]},
+  MO:{nickname:"Show Me State",admitted:1821,borders:["IA","IL","KY","TN","AR","OK","KS","NE"]},
+  MT:{nickname:"Treasure State",admitted:1889,borders:["ND","SD","WY","ID"]},
+  NE:{nickname:"Cornhusker State",admitted:1867,borders:["SD","IA","MO","KS","CO","WY"]},
+  NV:{nickname:"Silver State",admitted:1864,borders:["OR","ID","UT","AZ","CA"]},
+  NH:{nickname:"Granite State",admitted:1788,borders:["ME","MA","VT"]},
+  NJ:{nickname:"Garden State",admitted:1787,borders:["NY","PA","DE"]},
+  NM:{nickname:"Land of Enchantment",admitted:1912,borders:["AZ","UT","CO","OK","TX"]},
+  NY:{nickname:"Empire State",admitted:1788,borders:["NJ","PA","VT","MA","CT"]},
+  NC:{nickname:"Tar Heel State",admitted:1789,borders:["VA","TN","GA","SC"]},
+  ND:{nickname:"Peace Garden State",admitted:1889,borders:["MN","SD","MT"]},
+  OH:{nickname:"Buckeye State",admitted:1803,borders:["MI","PA","WV","KY","IN"]},
+  OK:{nickname:"Sooner State",admitted:1907,borders:["KS","MO","AR","TX","NM","CO"]},
+  OR:{nickname:"Beaver State",admitted:1859,borders:["WA","ID","NV","CA"]},
+  PA:{nickname:"Keystone State",admitted:1787,borders:["NY","NJ","DE","MD","WV","OH"]},
+  RI:{nickname:"Ocean State",admitted:1790,borders:["CT","MA"]},
+  SC:{nickname:"Palmetto State",admitted:1788,borders:["NC","GA"]},
+  SD:{nickname:"Mount Rushmore State",admitted:1889,borders:["ND","MN","IA","NE","WY","MT"]},
+  TN:{nickname:"Volunteer State",admitted:1796,borders:["KY","VA","NC","GA","AL","MS","AR","MO"]},
+  TX:{nickname:"Lone Star State",admitted:1845,borders:["NM","OK","AR","LA"]},
+  UT:{nickname:"Beehive State",admitted:1896,borders:["ID","WY","CO","NM","AZ","NV"]},
+  VT:{nickname:"Green Mountain State",admitted:1791,borders:["NY","NH","MA"]},
+  VA:{nickname:"Old Dominion",admitted:1788,borders:["MD","NC","TN","KY","WV"]},
+  WA:{nickname:"Evergreen State",admitted:1889,borders:["ID","OR"]},
+  WV:{nickname:"Mountain State",admitted:1863,borders:["OH","PA","MD","VA","KY"]},
+  WI:{nickname:"Badger State",admitted:1848,borders:["MI","MN","IA","IL"]},
+  WY:{nickname:"Equality State",admitted:1890,borders:["MT","SD","NE","CO","UT","ID"]}
+};
+
+const CA_FACTS = {
+  AB:{nickname:"Wild Rose Country",admitted:1905,borders:["BC","SK","NT"]},
+  BC:{nickname:"Beautiful British Columbia",admitted:1871,borders:["AB","YT","NT"]},
+  MB:{nickname:"Keystone Province",admitted:1870,borders:["SK","ON"]},
+  NB:{nickname:"Picture Province",admitted:1867,borders:["QC","NS"]},
+  NL:{nickname:"The Rock",admitted:1949,borders:["QC"]},
+  NS:{nickname:"Ocean Playground",admitted:1867,borders:["NB"]},
+  NT:{nickname:"Land of the Midnight Sun",admitted:1870,borders:["YT","NU","BC","AB","SK","MB"]},
+  NU:{nickname:"Our Land",admitted:1999,borders:["NT","MB"]},
+  ON:{nickname:"Heartland Province",admitted:1867,borders:["MB","QC"]},
+  PE:{nickname:"Garden of the Gulf",admitted:1873,borders:[]},
+  QC:{nickname:"La Belle Province",admitted:1867,borders:["ON","NB","NL"]},
+  SK:{nickname:"Land of Living Skies",admitted:1905,borders:["AB","MB","NT"]},
+  YT:{nickname:"Land of the Midnight Sun",admitted:1898,borders:["BC","NT"]}
+};
 
   let selectedCountry = 'us';
   function currentCountry(){ return COUNTRIES[selectedCountry]; }
@@ -1599,6 +1697,7 @@ button, input{ font-family: inherit; }
     if(isLearn){
       document.getElementById('learnFloatTitle').textContent = 'Tap a state to begin';
       document.getElementById('learnFloatSub').textContent = '';
+      document.getElementById('learnFloatFacts').style.display = 'none';
     }
 
     const mount = document.getElementById('mapMount');
@@ -1645,6 +1744,24 @@ button, input{ font-family: inherit; }
 
     document.getElementById('learnFloatTitle').textContent = state.name;
     document.getElementById('learnFloatSub').textContent = 'Capital: ' + state.capital;
+
+    const factsSource = selectedCountry === 'us' ? US_FACTS : CA_FACTS;
+    const facts = factsSource[state.id];
+    const factsBox = document.getElementById('learnFloatFacts');
+    if(facts){
+      factsBox.style.display = 'grid';
+      document.getElementById('learnFactNickname').textContent = facts.nickname;
+      document.getElementById('learnFactYearLabel').textContent = selectedCountry === 'us' ? 'Admitted' : 'Joined Confederation';
+      document.getElementById('learnFactYear').textContent = facts.admitted;
+      const nameLookup = {};
+      STATES.forEach(s => nameLookup[s.id] = s.name);
+      document.getElementById('learnFactBorders').textContent = facts.borders.length
+        ? facts.borders.map(b => nameLookup[b] || b).join(', ')
+        : (selectedCountry === 'us' ? 'No bordering states' : 'No bordering provinces');
+    } else {
+      factsBox.style.display = 'none';
+    }
+
     ping(game.svg, state.cx, state.cy, 'var(--tint)');
     haptic();
   }
